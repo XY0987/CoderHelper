@@ -1,26 +1,41 @@
 # coderhelper
 
-An Electron application with React and TypeScript
+程序员写项目的工具助手，致力于解决写项目过程中的沟通痛点，以项目需求为导向，接口文档为规范。并提供部分工具，让完成需求更加便捷快速
 
-## Recommended IDE Setup
+## 使用技术
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- React + TS + Electron + Antd + Redux + React-Router + ESLint + Prettier + Commitlint + Axios
 
-## Project Setup
+## 项目简介
 
-### Install
+- 离线版本
+  - mock数据
+  - 请求本地接口
+  - 部分工具预览
+- 在线版本
+  - 需求管理
+  - 接口管理、接口文档管理
+  - mock数据
+  - 项目管理
+  - 任务系统
+  - 线上会议
+  - 工具使用
+
+## 项目运行
+
+### 安装依赖
 
 ```bash
 $ yarn
 ```
 
-### Development
+### 生产环境
 
 ```bash
 $ yarn dev
 ```
 
-### Build
+### 打包
 
 ```bash
 # For windows
