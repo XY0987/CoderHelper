@@ -5,8 +5,8 @@ import { useState } from 'react'
 import { useForm } from './form'
 import zhCN from 'antd/locale/zh_CN'
 import 'dayjs/locale/zh-cn'
+import { ArgsProps } from 'antd/es/message'
 import { formType } from '../types/formTypes'
-import { ArgsProps } from 'antd/lib/message'
 type PromiseType = {
   resolve?: any
   reject?: any
@@ -85,13 +85,14 @@ export const useModal = (props: modalPropsType = {}) => {
   const [promiseRes, setPromiseRes] = useState<PromiseType>()
   const [containerEle, setContainerEle] = useState<HTMLElement | null>(null)
   const [messageApi, contextHolder] = message.useMessage()
+  const [isMessage, setIsMessage] = useState<boolean>(false)
   // 原本默认值时数组导致输入有问题
   const [defaultValue, setDefaultValue] = useState<any>({})
   const [root, setRoot] = useState<any>(null)
   // 卸载节点
   const unMounted = useCallback(() => {
-    if (containerEle) {
-      document.body.removeChild(containerEle)
+    if (containerEle || document.getElementById('myContainer')) {
+      document.body.removeChild(document.getElementById('myContainer') as HTMLElement)
       setContainerEle(null)
       root?.unmount()
     }
@@ -146,38 +147,45 @@ export const useModal = (props: modalPropsType = {}) => {
     root.render(
       <ConfigProvider locale={zhCN}>
         {contextHolder}
-        <Modal
-          onCancel={cancel}
-          open={show}
-          onOk={success}
-          destroyOnClose={true}
-          title={title}
-          wrapClassName="modal-wrap"
-          cancelButtonProps={{ shape: 'round' }}
-          okButtonProps={{ shape: 'round' }}
-          width={900}
-          footer={
-            type === 'form'
-              ? null
-              : [
-                  <Button key="success" type={okBtn.type} onClick={success} danger={okBtn.isDanger}>
-                    {okBtn.txt}
-                  </Button>,
-                  <Button
-                    key="cancel"
-                    onClick={cancel}
-                    danger={cancelBtn.isDanger}
-                    type={cancelBtn.type}
-                  >
-                    {cancelBtn.txt}
-                  </Button>
-                ]
-          }
-          getContainer={containerEle as HTMLElement}
-        >
-          {type === 'form' && <MyForm defaultValue={defaultValue || {}}></MyForm>}
-          {type === 'nomal' && <p>{infoTxt}</p>}
-        </Modal>
+        {isMessage ? null : (
+          <Modal
+            onCancel={cancel}
+            open={show}
+            onOk={success}
+            destroyOnClose={true}
+            title={title}
+            wrapClassName="modal-wrap"
+            cancelButtonProps={{ shape: 'round' }}
+            okButtonProps={{ shape: 'round' }}
+            width={900}
+            footer={
+              type === 'form'
+                ? null
+                : [
+                    <Button
+                      key="success"
+                      type={okBtn.type}
+                      onClick={success}
+                      danger={okBtn.isDanger}
+                    >
+                      {okBtn.txt}
+                    </Button>,
+                    <Button
+                      key="cancel"
+                      onClick={cancel}
+                      danger={cancelBtn.isDanger}
+                      type={cancelBtn.type}
+                    >
+                      {cancelBtn.txt}
+                    </Button>
+                  ]
+            }
+            getContainer={containerEle as HTMLElement}
+          >
+            {type === 'form' && <MyForm defaultValue={defaultValue || {}}></MyForm>}
+            {type === 'nomal' && <p>{infoTxt}</p>}
+          </Modal>
+        )}
       </ConfigProvider>
     )
   }, [
@@ -193,12 +201,14 @@ export const useModal = (props: modalPropsType = {}) => {
     success,
     type,
     contextHolder,
-    defaultValue
+    defaultValue,
+    isMessage
   ])
   // 初始化
   const init = (defaultValue?: any) => {
     defaultValue && setDefaultValue(defaultValue)
     setShow(true)
+    setIsMessage(false)
     // 创建挂载节点
     const div = document.createElement('div')
     div.id = 'myContainer'
@@ -211,13 +221,20 @@ export const useModal = (props: modalPropsType = {}) => {
   }
   const messageTips = (configs: ArgsProps) => {
     setShow(true)
+    setIsMessage(true)
     // 创建挂载节点
     const div = document.createElement('div')
     div.id = 'myContainer'
     document.body.append(div)
     setContainerEle(div)
     setRoot(ReactDOM.createRoot(div as HTMLElement))
-    messageApi.open(configs)
+    setTimeout(() => {
+      // 设置一个低优先级
+      messageApi.open({
+        ...configs,
+        onClose: unMounted
+      })
+    }, 0)
   }
   return { init, messageTips }
 }
