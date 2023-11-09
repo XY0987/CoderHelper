@@ -1,12 +1,10 @@
-import React from 'react'
-import Versions from './components/Versions'
+import React, { Fragment } from 'react'
+import { useRoutes } from 'react-router'
+import routes from './router'
 
 function App(): JSX.Element {
-  return (
-    <div className="container">
-      <Versions></Versions>
-    </div>
-  )
+  const element = useRoutes(routes)
+  return <Fragment>{element}</Fragment>
 }
 
 export default App
