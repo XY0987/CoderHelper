@@ -1,8 +1,8 @@
-import React from 'react'
 import { Button, Form, Input, message } from 'antd'
 
 import { useNavigate } from 'react-router'
 import style from './index.module.scss'
+import { signinApi } from '@renderer/aRequest/noAuth'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -12,6 +12,13 @@ export default function Login() {
   }
   const [messageApi, contextHolder] = message.useMessage()
   function onFinish(values: any) {
+    signinApi(values)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
     messageApi.info('登录成功')
   }
 
@@ -50,7 +57,7 @@ export default function Login() {
 
           <Form.Item
             label="密码"
-            name="userPassword"
+            name="password"
             rules={[{ required: true, message: '请输入密码!' }]}
           >
             <Input.Password placeholder="6-10位包含数字和字母,不能包含空格" />

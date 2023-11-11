@@ -1,16 +1,28 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { message, Button, Form, Input } from 'antd'
 import { useNavigate } from 'react-router'
 
 import style from './index.module.scss'
 import { useCountDown } from '../../../hooks/utils'
+import { getCodeApi, signupApi } from '@renderer/aRequest/noAuth'
 
 export default function Register() {
   const [messageApi, contextHolder] = message.useMessage()
   const tipsInfoFn = (values: any) => {
     messageApi.open(values)
   }
-  const finishHandle = async (values: any) => {}
+  const finishHandle = async (values: any) => {
+    signupApi(values)
+      .then((res) => {
+        console.log(res)
+        tipsInfoFn({
+          type: 'success',
+          content: '注册成功'
+        })
+        form.resetFields()
+      })
+      .catch((_err) => {})
+  }
 
   const [form] = Form.useForm()
   const [isDis, setIsDis] = useState<boolean>(false)
@@ -46,6 +58,19 @@ export default function Register() {
   function getCode() {
     const { userEmail } = form.getFieldsValue()
     if (emailReg.test(userEmail)) {
+      getCodeApi({
+        userEmail
+      })
+        .then((res) => {
+          console.log(res)
+          tipsInfoFn({
+            type: 'success',
+            content: '发送成功'
+          })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       start()
     } else {
       form.setFields([{ name: 'userEmail', errors: ['请输入正确的邮箱格式'] }])
@@ -83,7 +108,7 @@ export default function Register() {
             </Form.Item>
             <Form.Item
               label="密码"
-              name="userPassword"
+              name="password"
               rules={[{ required: true, message: '请输入密码!' }]}
             >
               <Input.Password placeholder="6-10位包含数字和字母,不能包含空格" />
@@ -96,7 +121,7 @@ export default function Register() {
                 { required: true, message: '请重复输入密码!' },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    if (!value || getFieldValue('userPassword') === value) {
+                    if (!value || getFieldValue('password') === value) {
                       return Promise.resolve()
                     }
                     return Promise.reject(new Error('请重复输入密码!'))
@@ -112,8 +137,8 @@ export default function Register() {
               rules={[
                 { required: true, message: '请输入验证码' },
                 {
-                  pattern: /^\d{6}$/,
-                  message: '请输入6位验证码'
+                  pattern: /^\d{4}$/,
+                  message: '请输入4位验证码'
                 }
               ]}
             >
