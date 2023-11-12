@@ -1,4 +1,3 @@
-import React from 'react'
 import failImg from '../../assets/missPageImg/404.svg'
 export default function NotFound() {
   return (

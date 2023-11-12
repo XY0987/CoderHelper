@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import { Fragment } from 'react'
 import { useRoutes } from 'react-router'
 import routes from './router'
 

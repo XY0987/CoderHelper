@@ -105,7 +105,7 @@ export const useForm = (formProp: formProp) => {
       }
       setFileList(fileList)
     }, [])
-    const onFinishFailed = useCallback((values: any) => {}, [])
+    const onFinishFailed = useCallback(() => {}, [])
     const onReset = useCallback(() => {
       formRef.current?.resetFields()
     }, [])

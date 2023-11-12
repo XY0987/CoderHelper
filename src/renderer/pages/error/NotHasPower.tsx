@@ -1,4 +1,3 @@
-import React from 'react'
 import failImg from '../../assets/missPageImg/403.svg'
 export default function NotPower() {
   return (

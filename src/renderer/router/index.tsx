@@ -1,4 +1,3 @@
-import React from 'react'
 import { RouteObject } from 'react-router'
 import NotAuth from '../components/auth/NotAuth'
 import NotFound from '../pages/error/NotFound'
