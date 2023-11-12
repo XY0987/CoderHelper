@@ -1,4 +1,4 @@
-import { Button, Form, Input, message } from 'antd'
+import { Button, Form, Input } from 'antd'
 
 import { useNavigate } from 'react-router'
 import style from './index.module.scss'
@@ -10,7 +10,6 @@ export default function Login() {
   function jumpToForget() {
     navigate('/forgetPassword')
   }
-  const [messageApi, contextHolder] = message.useMessage()
   function onFinish(values: any) {
     signinApi(values)
       .then((res) => {
@@ -19,7 +18,6 @@ export default function Login() {
       .catch((err) => {
         console.log(err)
       })
-    messageApi.info('登录成功')
   }
 
   function jumpToReg() {
@@ -28,7 +26,6 @@ export default function Login() {
 
   return (
     <div className={style.container}>
-      {contextHolder}
       <div className={style.background}></div>
       <div className={style.content}>
         <div className={style.header}>登录</div>

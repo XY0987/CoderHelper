@@ -2,6 +2,7 @@ import axios from 'axios'
 
 import type { AxiosInstance } from 'axios'
 import { MyRequestConfig } from '../types/apiTypes'
+import { message } from 'antd'
 
 class MyRequest {
   // request实例=>axios的实例
@@ -11,9 +12,15 @@ class MyRequest {
     // 响应拦截器
     this.instance.interceptors.response.use(
       (res) => {
-        // if (res.data.code !== 2000) {
-        //   throw Error(res.data.msg);
-        // }
+        if (res.data.code < 0 || res.data.code == 500) {
+          res.data.message && message.warning(res.data.message)
+          throw Error(res.data.message)
+        }
+        if (res.data.code === 200) {
+          console.log(1111)
+
+          res.data.message && message.success(res.data.message)
+        }
         // 这里返回的是res.data
         return res.data
       },

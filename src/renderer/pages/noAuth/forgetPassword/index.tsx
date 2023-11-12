@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router'
 
 import style from './index.module.scss'
 import { useCountDown } from '../../../hooks/utils'
-import { getCodeApi, signupApi } from '@renderer/aRequest/noAuth'
+import { editPasswordApi, getCodeApi } from '@renderer/aRequest/noAuth'
 
-export default function Register() {
+export default function ForgetPassword() {
   const finishHandle = async (values: any) => {
-    signupApi(values)
+    editPasswordApi(values)
       .then((res) => {
         console.log(res)
         form.resetFields()
@@ -26,11 +26,11 @@ export default function Register() {
   }
   const navigate = useNavigate()
   function jumpToReg() {
-    navigate('/')
+    navigate('/register')
   }
 
-  function jumpToForget() {
-    navigate('/forgetPassword')
+  function jumptoLogin() {
+    navigate('/')
   }
   const emailReg =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -70,7 +70,7 @@ export default function Register() {
       <div className={style.container}>
         <div className={style.background}></div>
         <div className={style.content}>
-          <div className={style.header}>注册</div>
+          <div className={style.header}>忘记密码</div>
           <Form
             form={form}
             labelCol={{ span: 6 }}
@@ -138,15 +138,15 @@ export default function Register() {
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" disabled={isDis}>
-                注册
+                修改
               </Button>
             </Form.Item>
             {true ? (
               <div className={style.toreg}>
-                <Button onClick={jumpToForget} type="link">
-                  忘记密码?找回密码
-                </Button>
                 <Button onClick={jumpToReg} type="link">
+                  还没有账号？注册
+                </Button>
+                <Button onClick={jumptoLogin} type="link">
                   已有账号？登录
                 </Button>
               </div>

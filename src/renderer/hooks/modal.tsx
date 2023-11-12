@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { Button, ConfigProvider, Modal, message } from 'antd'
 import { useState } from 'react'

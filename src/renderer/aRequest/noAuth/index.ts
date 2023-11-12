@@ -20,3 +20,10 @@ export const signupApi = async (data: any) =>
     method: 'POST',
     data: data
   })
+
+export const editPasswordApi = async (data: any) =>
+  myRequest.request({
+    url: '/auth/editPassword',
+    method: 'POST',
+    data: data
+  })
