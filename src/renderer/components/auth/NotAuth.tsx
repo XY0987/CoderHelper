@@ -1,8 +1,14 @@
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 
 export default function NotAuth({ title, Element }: { title: string; Element: React.FC }) {
+  const navigate = useNavigate()
+
   useEffect(() => {
-    // 如果
+    // 登录了直接跳转到首页
+    if (localStorage.getItem('token')) {
+      navigate('/home')
+    }
     document.title = title
   }, [])
   return <Element></Element>

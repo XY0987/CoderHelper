@@ -20,9 +20,6 @@ export const userSlice = createSlice({
       store.token = payload.token
       store.userInfo = payload.userInfo
     },
-    update(store, { payload }) {
-      store.userInfo = payload.userInfo
-    },
     logout(store) {
       store.token = ''
       store.userInfo = {}

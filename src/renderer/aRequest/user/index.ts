@@ -6,3 +6,10 @@ export const getUserInfoApi = () =>
     url: '/user/getuserInfo',
     method: 'GET'
   })
+
+export const uploadUserInfoApi = (data: any) =>
+  myRequest.request({
+    url: '/user/uploadUserInfo',
+    method: 'PUT',
+    params: data
+  })

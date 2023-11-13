@@ -1,3 +1,9 @@
+import Header from '@renderer/components/home/Header'
+
 export default function Home() {
-  return <div>index</div>
+  return (
+    <div>
+      <Header></Header>
+    </div>
+  )
 }
