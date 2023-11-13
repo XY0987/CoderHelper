@@ -1,10 +1,13 @@
-import { Dropdown, MenuProps } from 'antd'
+import { Badge, Dropdown, MenuProps } from 'antd'
 import style from './index.module.scss'
 import avator from '@renderer/assets/avator.jpg'
 import { useModal } from '@renderer/hooks/modal'
 import { editUserInfoOperator } from './operator'
 import { useUserInfoToLocalHook } from '@renderer/hooks/userInfoLogin'
 import { uploadUserInfoApi } from '@renderer/aRequest/user'
+import { BellOutlined } from '@ant-design/icons'
+import Message from '../message'
+import { useState } from 'react'
 
 export default function Header() {
   const { init, messageTips } = useModal({
@@ -50,6 +53,8 @@ export default function Header() {
         })
       })
   }
+
+  const [open, setIsOpen] = useState<boolean>(false)
   const items: MenuProps['items'] = [
     {
       label: <span onClick={editUserInfo}>修改用户信息</span>,
@@ -60,16 +65,26 @@ export default function Header() {
       key: '1'
     }
   ]
+
+  const openFn = () => {
+    setIsOpen(true)
+  }
   return (
     <div className={style.container}>
       <div className={style.operates}>
         <div className={style.userInfo}>
+          <div className={style.message} onClick={openFn}>
+            <Badge count={99} offset={[5, 0]}>
+              <BellOutlined style={{ fontSize: '20px' }} />
+            </Badge>
+          </div>
           <Dropdown menu={{ items }} trigger={['click']}>
             <a onClick={(e) => e.preventDefault()}>
               <img className={style.userImg} src={avator} alt="" />
             </a>
           </Dropdown>
         </div>
+        <Message open={open} onClose={() => setIsOpen(false)}></Message>
       </div>
     </div>
   )

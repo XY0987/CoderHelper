@@ -6,10 +6,17 @@
   .operates {
     .userInfo {
       display: flex;
+      align-items: center;
+      justify-content: center;
       .userImg {
         width: 35px;
         height: 35px;
         border-radius: 50%;
+        cursor: pointer;
+      }
+      .message {
+        position: relative;
+        margin-right: 35px;
         cursor: pointer;
       }
     }
