@@ -17,8 +17,6 @@ class MyRequest {
           throw Error(res.data.message)
         }
         if (res.data.code === 200) {
-          console.log(1111)
-
           res.data.message && message.success(res.data.message)
         }
         // 这里返回的是res.data
@@ -68,8 +66,8 @@ class MyRequest {
 export default MyRequest
 
 export const myRequest = new MyRequest({
-  baseURL: '/api'
-  // headers: {
-  //   token: localStorage.getItem('token') || ''
-  // }
+  baseURL: '/api',
+  headers: {
+    Authorization: localStorage.getItem('token') || ''
+  }
 })

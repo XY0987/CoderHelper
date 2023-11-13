@@ -3,9 +3,11 @@ import { Button, Form, Input } from 'antd'
 import { useNavigate } from 'react-router'
 import style from './index.module.scss'
 import { signinApi } from '@renderer/aRequest/noAuth'
+import { useUserInfoToLocalHook } from '@renderer/hooks/userInfoLogin'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { userLogin } = useUserInfoToLocalHook()
 
   function jumpToForget() {
     navigate('/forgetPassword')
@@ -14,6 +16,8 @@ export default function Login() {
     signinApi(values)
       .then((res) => {
         console.log(res)
+        userLogin(res.token)
+        navigate('/home')
       })
       .catch((err) => {
         console.log(err)

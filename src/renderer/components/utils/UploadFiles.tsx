@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PlusOutlined } from '@ant-design/icons'
 import { Modal, Upload } from 'antd'
 import type { RcFile, UploadProps } from 'antd/es/upload'

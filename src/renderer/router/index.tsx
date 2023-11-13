@@ -6,9 +6,11 @@ import defaultRoutes from './default'
 import MeetingRoutes from './user/MeetingRoutes'
 import InterfaceRoutes from './user/InterfaceRoutes'
 import WorkRoutes from './user/WorkRoutes'
+import userRoutes from './user'
 
 const routes: RouteObject[] = [
   ...defaultRoutes,
+  ...userRoutes,
   ...MeetingRoutes,
   ...InterfaceRoutes,
   ...WorkRoutes,

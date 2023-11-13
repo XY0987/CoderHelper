@@ -1,7 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-
-import jwtDecode from 'jwt-decode'
-
 // 倒计时hook
 export function useCountDown(initCount = 10, callBack = () => {}, endBack = () => {}) {
   const timeId = useRef<{ id: number }>({ id: 0 })
