@@ -8,8 +8,11 @@ import { uploadUserInfoApi } from '@renderer/aRequest/user'
 import { BellOutlined } from '@ant-design/icons'
 import Message from '../message'
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
 
-export default function Header() {
+export default function ApplyHeader() {
+  const navigate = useNavigate()
+
   const { init, messageTips } = useModal({
     type: 'form',
     formOptions: editUserInfoOperator,
@@ -24,6 +27,7 @@ export default function Header() {
     logoutTips()
       .then(() => {
         userLogout()
+        navigate('/')
       })
       .catch(() => {
         messageTips({
@@ -86,6 +90,7 @@ export default function Header() {
         </div>
         <Message open={open} onClose={() => setIsOpen(false)}></Message>
       </div>
+      <div className={style.headerTitle}>CoderHelper</div>
     </div>
   )
 }

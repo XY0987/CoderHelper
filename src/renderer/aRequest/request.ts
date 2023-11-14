@@ -9,6 +9,20 @@ class MyRequest {
   instance: AxiosInstance
   constructor(config: MyRequestConfig) {
     this.instance = axios.create(config)
+    this.instance.interceptors.request.use(
+      (config) => {
+        //  全局请求成功的拦截
+        const token = localStorage.getItem('token')
+        if (token) {
+          config.headers.Authorization = token
+        }
+        return config
+      },
+      (err) => {
+        console.log('全局请求失败的拦截器')
+        return err
+      }
+    )
     // 响应拦截器
     this.instance.interceptors.response.use(
       (res) => {
@@ -66,8 +80,5 @@ class MyRequest {
 export default MyRequest
 
 export const myRequest = new MyRequest({
-  baseURL: '/api',
-  headers: {
-    Authorization: localStorage.getItem('token') || ''
-  }
+  baseURL: '/api'
 })

@@ -39,7 +39,7 @@ export const useUserInfoToLocalHook = () => {
   // 登录
   const userLogin = async (token: string) => {
     localStorage.setItem('token', `Bearer ${token}`)
-    userPersistence()
+    await userPersistence()
   }
 
   // 退出登录

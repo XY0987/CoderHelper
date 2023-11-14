@@ -1,9 +1,9 @@
-import Header from '@renderer/components/home/Header'
+import Layout from '@renderer/components/home/Layout'
 
 export default function Home() {
   return (
     <div>
-      <Header></Header>
+      <Layout></Layout>
     </div>
   )
 }

@@ -14,10 +14,10 @@ export default function Login() {
   }
   function onFinish(values: any) {
     signinApi(values)
-      .then((res) => {
+      .then(async (res) => {
         console.log(res)
-        userLogin(res.token)
-        navigate('/home')
+        await userLogin(res.token)
+        navigate('/home/project')
       })
       .catch((err) => {
         console.log(err)

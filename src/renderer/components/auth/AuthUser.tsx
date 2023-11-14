@@ -18,7 +18,7 @@ export default function AuthUser({
 
   useEffect(() => {
     // 如果没有登录,并且没有传入回调函数
-    if (!user.token && !callBack) {
+    if (!user.token && !callBack && !localStorage.getItem('token')) {
       navigate('/')
       return
     }
