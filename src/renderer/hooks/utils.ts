@@ -55,11 +55,11 @@ export const useAsync = () => {
   const retry = useRef(() => {})
   const setDate = useCallback((data: any) => {
     setState({
-      data: data.data.records ? data.data.records : [],
+      data: data.data.pagingRes,
       isLoading: false,
       error: null,
-      total: data.data.total || 0,
-      isNodata: data.data.total === 0
+      total: data.data.allTotals || 0,
+      isNodata: data.data.allTotals === 0
     })
   }, [])
   const setError = (err: any) => {
