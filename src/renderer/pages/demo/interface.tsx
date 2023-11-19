@@ -33,8 +33,13 @@ export default function InterfaceDemo() {
     )
     console.log(res)
   }
+  const notic = () => {
+    ;(window as any).publicApi.notic()
+  }
   return (
     <div>
+      <Button onClick={notic}>测试通知</Button>
+      <hr />
       <Button onClick={localGet}>本地请求</Button>
       <Button onClick={getData}>测试get请求</Button>
       <Button onClick={uploadFile}>上传文件</Button>

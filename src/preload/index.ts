@@ -20,6 +20,11 @@ if (process.contextIsolated) {
         return ipcRenderer.invoke('interface-POST-File', url, data, filePath)
       }
     })
+    contextBridge.exposeInMainWorld('publicApi', {
+      notic: () => {
+        return ipcRenderer.invoke('public-notic')
+      }
+    })
   } catch (error) {
     console.error(error)
   }

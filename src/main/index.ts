@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, globalShortcut, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, globalShortcut, ipcMain, Notification } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -74,6 +74,13 @@ app.whenReady().then(() => {
       return res
     }
   )
+  // 全局事件
+  ipcMain.handle('public-notic', (_event) => {
+    new Notification({
+      title: '测试',
+      body: '测试'
+    }).show()
+  })
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
