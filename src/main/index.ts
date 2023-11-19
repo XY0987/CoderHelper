@@ -1,7 +1,8 @@
-import { app, shell, BrowserWindow, globalShortcut } from 'electron'
+import { app, shell, BrowserWindow, globalShortcut, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { getData, postDataUploadFile } from './interface'
 
 function createWindow(): void {
   // Create the browser window.
@@ -61,6 +62,18 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+  // 监听接口事件
+  ipcMain.handle('interface-GET', async (_event, url: string, data: any) => {
+    const res = await getData(url, data)
+    return res
+  })
+  ipcMain.handle(
+    'interface-POST-File',
+    async (_event, url: string, data: any, filePath: string) => {
+      const res = await postDataUploadFile(url, data, filePath)
+      return res
+    }
+  )
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

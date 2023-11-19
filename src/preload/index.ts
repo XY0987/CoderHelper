@@ -1,4 +1,4 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
@@ -11,6 +11,15 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('interfaceApi', {
+      sendGet: (url: string, data: any) => {
+        console.log('传递的数据', url, data)
+        return ipcRenderer.invoke('interface-GET', url, data)
+      },
+      sendPostFile: (url: string, data: any, filePath: string) => {
+        return ipcRenderer.invoke('interface-POST-File', url, data, filePath)
+      }
+    })
   } catch (error) {
     console.error(error)
   }

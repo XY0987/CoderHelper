@@ -1,4 +1,17 @@
-import { AppstoreOutlined, StarOutlined } from '@ant-design/icons'
+import {
+  ApartmentOutlined,
+  AppstoreOutlined,
+  CheckSquareOutlined,
+  StarOutlined
+} from '@ant-design/icons'
+
+const demoMenuItem = [
+  {
+    path: '/home/interfaceDemo',
+    icon: CheckSquareOutlined,
+    label: '接口进程通信demo'
+  }
+]
 
 export const menuItem = [
   {
@@ -10,5 +23,11 @@ export const menuItem = [
     path: '/home/collect',
     icon: StarOutlined,
     label: '我的收藏'
-  }
+  },
+  {
+    path: '/home/publicProject',
+    icon: ApartmentOutlined,
+    label: '公开项目'
+  },
+  ...demoMenuItem
 ]
