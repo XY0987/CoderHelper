@@ -1,21 +1,16 @@
 import { SmallDashOutlined } from '@ant-design/icons'
-import style from './index.module.scss'
 import { Button, Dropdown } from 'antd'
-
-import avator from '@renderer/assets/avator.jpg'
 import { useAsync } from '@renderer/hooks/utils'
 import { useCallback, useEffect, useState } from 'react'
-import {
-  addProjectApi,
-  delProjectApi,
-  editProjectApi,
-  getProjectApi
-} from '@renderer/aRequest/user/meeting'
+import { addProjectApi, delProjectApi, editProjectApi } from '@renderer/aRequest/user/meeting'
 import Paging from '@renderer/components/utils/Pagintg'
 import Loading from '@renderer/components/utils/Loading'
 import { useModal } from '@renderer/hooks/modal'
 import EmptyNoData from '@renderer/components/utils/Empty'
 import { addProjectOptions, editProjectOptions } from './options'
+import ProjectItem from '@renderer/components/projectItem'
+import { getProjectMerageApi } from '@renderer/aRequest/aMerge/getCollectInfo'
+import { collectProjectApi, delCollectProjectApi } from '@renderer/aRequest/user'
 export default function ProjectManage() {
   const { run, data = [], retry, total, isLoading, isNodata } = useAsync()
   const { init } = useModal({
@@ -32,6 +27,10 @@ export default function ProjectManage() {
     type: 'form',
     formOptions: editProjectOptions
   })
+  const { init: delCollectModal } = useModal({
+    type: 'nomal',
+    infoTxt: '确定要取消收藏吗'
+  })
 
   const [pagingConfig, setPagingConfig] = useState({
     pageNo: 1,
@@ -45,7 +44,7 @@ export default function ProjectManage() {
 
   const fetchProjects = useCallback(
     () =>
-      getProjectApi({
+      getProjectMerageApi({
         beginIndex: pagingConfig.pageNo,
         size: pagingConfig.pageSize,
         power: pagingConfig.power
@@ -71,20 +70,16 @@ export default function ProjectManage() {
   const addProject = () => {
     addModal()
       .then((res) => {
-        console.log(res)
         return addProjectApi(res)
       })
-      .then((res) => {
-        console.log(res)
+      .then(() => {
         retry.current()
       })
       .catch(() => {})
   }
   const editProject = (item: any) => {
-    console.log(item)
     editModal(item)
       .then((res: any) => {
-        console.log(res)
         return editProjectApi({ ...res, projectId: item.projectId })
       })
       .then(() => {
@@ -92,6 +87,54 @@ export default function ProjectManage() {
       })
       .catch(() => {})
   }
+
+  const delCollect = (item: any) => {
+    delCollectModal()
+      .then(() => {
+        return delCollectProjectApi({ projectId: item.projectId })
+      })
+      .then(() => {
+        retry.current()
+      })
+      .catch(() => {})
+  }
+
+  const addCollect = (item: any) => {
+    collectProjectApi({ projectId: item.projectId }).then(() => {
+      retry.current()
+    })
+  }
+
+  const DropDownProject = ({ item }: { item: any }) => {
+    return (
+      <Dropdown
+        menu={{
+          items: [
+            {
+              key: item.projectId,
+              label: <span onClick={() => delFn(item)}>删除</span>
+            },
+            {
+              key: `${item.projectId}-0`,
+              label: <span onClick={() => editProject(item)}>修改</span>
+            },
+            item.isCollect
+              ? {
+                  key: `${item.projectId}-1`,
+                  label: <span onClick={() => delCollect(item)}>取消收藏</span>
+                }
+              : {
+                  key: `${item.projectId}-1`,
+                  label: <span onClick={() => addCollect(item)}>收藏</span>
+                }
+          ]
+        }}
+      >
+        <SmallDashOutlined />
+      </Dropdown>
+    )
+  }
+
   return (
     <div>
       <div>
@@ -100,38 +143,7 @@ export default function ProjectManage() {
       {isLoading ? (
         <Loading></Loading>
       ) : (
-        <div className={style.container}>
-          {data &&
-            data.map((item: any) => {
-              return (
-                <div className={style.projectItem} key={item.projectId}>
-                  <div className={style.projectHeader}>
-                    <img src={avator} className={style.projectImg} alt="" />
-                    <span className={style.projectTitle}>{item.projectName}</span>
-                  </div>
-                  <div className={style.projectDesc}>{item.projectDesc}</div>
-                  <div className={style.projectOperator}>
-                    <Dropdown
-                      menu={{
-                        items: [
-                          {
-                            key: item.projectId,
-                            label: <span onClick={() => delFn(item)}>删除</span>
-                          },
-                          {
-                            key: `${item.projectId}-0`,
-                            label: <span onClick={() => editProject(item)}>修改</span>
-                          }
-                        ]
-                      }}
-                    >
-                      <SmallDashOutlined />
-                    </Dropdown>
-                  </div>
-                </div>
-              )
-            })}
-        </div>
+        data && <ProjectItem data={data} DropDownProp={DropDownProject}></ProjectItem>
       )}
       {isNodata ? <EmptyNoData></EmptyNoData> : null}
       <Paging {...pagingConfig} total={total}></Paging>

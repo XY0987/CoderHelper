@@ -6,6 +6,7 @@
     flex: 0.25;
     border: 1px solid #eee;
     cursor: pointer;
+    border-radius: 15px;
     .projectHeader {
       display: flex;
       align-items: center;
@@ -26,14 +27,23 @@
     }
     .projectOperator {
       display: flex;
+      width: 100%;
       flex-direction: row-reverse;
       padding-right: 5px;
       font-size: 20px;
       color: #707d85;
+      .projectCollectInfo {
+        flex: 1;
+        font-size: 16px;
+        .txt {
+          margin-left: 5px;
+        }
+      }
     }
   }
   .projectItem:hover {
     border: 1px solid #3296fa;
     transform: translateY(-5px);
+    animation: all 0.5s;
   }
 }

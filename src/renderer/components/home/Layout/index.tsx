@@ -1,6 +1,6 @@
 import React from 'react'
 import type { MenuProps } from 'antd'
-import { Layout, Menu } from 'antd'
+import { Layout, Menu, message } from 'antd'
 import { Outlet, useNavigate } from 'react-router'
 import ApplyHeader from '../Header'
 
@@ -19,6 +19,7 @@ export default function HomeLayout() {
   }))
 
   const onClick = (e: any) => {
+    message.destroy()
     navigate(e.key)
   }
 
