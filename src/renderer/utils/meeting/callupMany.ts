@@ -6,68 +6,6 @@ var PeerConnection = window.RTCPeerConnection
 // 存储所有的建立连接（一对多）
 var RtcPcMaps = new Map()
 
-// var localDevice: any = null;
-// 添加音视频轨道
-// function initInnerLocalDevice(this: any) {
-//   const that: any = this as any;
-//   localDevice = {
-//     audioIn: [],
-//     videoIn: [],
-//     audioOut: [],
-//   };
-//   let constraints = { video: true, audio: true };
-//   if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-//     console.log("浏览器不支持");
-//     return;
-//   }
-//   navigator.mediaDevices
-//     .getUserMedia(constraints)
-//     .then(function (stream) {
-//       stream.getTracks().forEach((trick) => {
-//         trick.stop();
-//       });
-
-//       // List cameras and microphones.
-//       navigator.mediaDevices
-//         .enumerateDevices()
-//         .then(function (devices) {
-//           devices.forEach(function (device) {
-//             let obj = {
-//               id: device.deviceId,
-//               kind: device.kind,
-//               label: device.label,
-//             };
-//             if (device.kind === "audioinput") {
-//               if (
-//                 localDevice.audioIn.filter((e: any) => e.id === device.deviceId)
-//                   .length === 0
-//               ) {
-//                 localDevice.audioIn.push(obj);
-//               }
-//             }
-//             if (device.kind === "audiooutput") {
-//               if (
-//                 localDevice.audioOut.filter(
-//                   (e: any) => e.id === device.deviceId
-//                 ).length === 0
-//               ) {
-//                 localDevice.audioOut.push(obj);
-//               }
-//             } else if (device.kind === "videoinput") {
-//               if (
-//                 localDevice.videoIn.filter((e: any) => e.id === device.deviceId)
-//                   .length === 0
-//               ) {
-//                 localDevice.videoIn.push(obj);
-//               }
-//             }
-//           });
-//         })
-//         .catch(handleError);
-//     })
-//     .catch(handleError);
-// }
-
 class CallupMany {
   localDevice: any
   formInline: any = {}
@@ -111,7 +49,7 @@ class CallupMany {
       transports: ['websocket'],
       query: that.formInline
     })
-    this.linkSocket.on('connect', async (e: any) => {
+    this.linkSocket.on('connect', async () => {
       console.log('server init connect success', that.linkSocket)
       that.centerDialogVisible = false //加入后
       //获取房间用户列表（新用户进房间后需要和房间内每个用户进行RTC连接 后进入着主动push offer）
@@ -318,7 +256,7 @@ class CallupMany {
   }
   // 打开或关闭麦克风
   audioControl(b: any) {
-    RtcPcMaps.forEach((v, k) => {
+    RtcPcMaps.forEach((v) => {
       const senders = v.getSenders()
       const send = senders.find((s: any) => s.track.kind === 'audio')
       send.track.enabled = b
@@ -346,8 +284,8 @@ class CallupMany {
   }
   // 监听当前是否再在视频或语音
   listenerIsTalking() {
-    RtcPcMaps.forEach((v, i) => {
-      let senders = v.getSenders()
+    RtcPcMaps.forEach((_v) => {
+      // let senders = v.getSenders()
       //获取音频或者视频 判断是否激活状态 如果是则表明正在视频或者正在语音
     })
   }
