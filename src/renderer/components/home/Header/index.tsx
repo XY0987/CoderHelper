@@ -4,13 +4,14 @@ import avator from '@renderer/assets/avator.jpg'
 import { useModal } from '@renderer/hooks/modal'
 import { editUserInfoOperator } from './operator'
 import { useUserInfoToLocalHook } from '@renderer/hooks/userInfoLogin'
-import { uploadUserInfoApi } from '@renderer/aRequest/user'
+import { getMessageApi, setMessageIsReadApi, uploadUserInfoApi } from '@renderer/aRequest/user'
 import { BellOutlined } from '@ant-design/icons'
-import Message from '../message'
-import { useState } from 'react'
+import MessageBox from '../messagebox'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useAsync } from '@renderer/hooks/utils'
 
-export default function ApplyHeader() {
+export default function ApplyHeader({ projectId }: { projectId?: number }) {
   const navigate = useNavigate()
 
   const { init, messageTips } = useModal({
@@ -70,15 +71,40 @@ export default function ApplyHeader() {
     }
   ]
 
-  const openFn = () => {
-    setIsOpen(true)
+  const { run, data = [], total, retry } = useAsync()
+  const [getInfoConfig, setGetInfoConfig] = useState({
+    messageIsRead: 0,
+    messageType: 0
+  })
+  const openFn = useCallback(() => {
+    setMessageIsReadApi({ messageType: getInfoConfig.messageType }).then(() => {
+      setIsOpen(true)
+    })
+  }, [getInfoConfig])
+
+  const onClose = () => {
+    setIsOpen(false)
+    retry.current()
   }
+
+  const fetchProjects = useCallback(
+    () =>
+      getMessageApi({
+        messageIsRead: getInfoConfig.messageIsRead,
+        messageType: getInfoConfig.messageType,
+        messageProjectId: projectId
+      }),
+    [getInfoConfig]
+  )
+  useEffect(() => {
+    run(fetchProjects(), { retry: fetchProjects })
+  }, [getInfoConfig, run, fetchProjects])
   return (
     <div className={style.container}>
       <div className={style.operates}>
         <div className={style.userInfo}>
           <div className={style.message} onClick={openFn}>
-            <Badge count={99} offset={[5, 0]}>
+            <Badge count={total} offset={[5, 0]}>
               <BellOutlined style={{ fontSize: '20px' }} />
             </Badge>
           </div>
@@ -88,7 +114,12 @@ export default function ApplyHeader() {
             </a>
           </Dropdown>
         </div>
-        <Message open={open} onClose={() => setIsOpen(false)}></Message>
+        <MessageBox
+          setGetInfoConfig={setGetInfoConfig}
+          data={data}
+          open={open}
+          onClose={onClose}
+        ></MessageBox>
       </div>
       <div className={style.headerTitle}>CoderHelper</div>
     </div>

@@ -48,3 +48,17 @@ export const getProjectCollectInfoApi = (data: any) =>
     method: 'GET',
     params: data
   })
+
+export const getMessageApi = (data: any) =>
+  myRequest.request({
+    url: '/message/getMessage',
+    method: 'GET',
+    params: data
+  })
+
+export const setMessageIsReadApi = (data: any) =>
+  myRequest.request({
+    url: '/message/setReadMessage',
+    method: 'GET',
+    params: data
+  })

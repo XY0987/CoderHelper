@@ -2969,6 +2969,11 @@ human-signals@^4.3.0:
   resolved "https://registry.npmmirror.com/human-signals/-/human-signals-4.3.1.tgz#ab7f811e851fca97ffbd2c1fe9a958964de321b2"
   integrity sha512-nZXjEF2nbo7lIw3mgYjItAfgQXog3OjJogSbKa2CQIIvSGWcKgeJnQlNXip6NglNzYH45nSRiEVimMvYL8DDqQ==
 
+husky@^8.0.3:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-8.0.3.tgz#4936d7212e46d1dea28fef29bb3a108872cd9184"
+  integrity sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==
+
 iconv-corefoundation@^1.1.7:
   version "1.1.7"
   resolved "https://registry.npmmirror.com/iconv-corefoundation/-/iconv-corefoundation-1.1.7.tgz#31065e6ab2c9272154c8b0821151e2c88f1b002a"
@@ -4902,7 +4907,7 @@ smart-buffer@^4.0.2:
 
 socket.io-client@^4.7.2:
   version "4.7.2"
-  resolved "https://registry.npmmirror.com/socket.io-client/-/socket.io-client-4.7.2.tgz#f2f13f68058bd4e40f94f2a1541f275157ff2c08"
+  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.7.2.tgz#f2f13f68058bd4e40f94f2a1541f275157ff2c08"
   integrity sha512-vtA0uD4ibrYD793SOIAwlo8cj6haOeMHrGvwPxJsxH7CeIksqJ+3Zc06RvWTIFgiSqx4A3sOnTXpfAEE2Zyz6w==
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"

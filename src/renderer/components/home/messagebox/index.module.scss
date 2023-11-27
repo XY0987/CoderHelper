@@ -1,0 +1,13 @@
+.messageContainer {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #eee;
+  .messageTitle {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .messageContent {
+    padding: 5px;
+    font-size: 12px;
+    color: #333;
+  }
+}

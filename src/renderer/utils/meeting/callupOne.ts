@@ -13,13 +13,13 @@ type userInfo = {
   nickname: string
 }
 
-/* 
+/*
 打电话需要等对方同意再接通
 对方拒绝有提示
 可以挂断电话
 */
 
-/* 
+/*
 
 添加流程而不是修改流程，打电话之前先来个callbefore
 
@@ -254,7 +254,7 @@ class Callup {
     this.linkSocket?.emit('answer', params)
   }
   // 创建应答
-  async onRemoteAnswer(fromUid: any, answer: any) {
+  async onRemoteAnswer(_fromUid: any, answer: any) {
     await this.localRtcPc.setRemoteDescription(answer)
   }
   // 将新媒体流设置到页面中（本地的流）
