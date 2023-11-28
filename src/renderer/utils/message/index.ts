@@ -9,10 +9,12 @@ class Message {
     this.onListener(this.ws)
   }
   onListener(ws: any) {
+    // 消息监听（用于消息提醒）
     ws.on('sendMessageServer', (data: any) => {
-      const { type, content, title } = JSON.parse(data)
+      // messageContent是一个JSON字符串，里边的content是提示内容
+      const { messageContent, messageTitle } = JSON.parse(data)
       console.log(JSON.parse(data))
-      ;(window as any).publicApi.notic(type, content, title)
+      ;(window as any).publicApi.notic(JSON.parse(messageContent).content, messageTitle)
     })
   }
   sendMessage(info: any) {
