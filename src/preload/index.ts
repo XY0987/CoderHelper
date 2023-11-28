@@ -21,8 +21,8 @@ if (process.contextIsolated) {
       }
     })
     contextBridge.exposeInMainWorld('publicApi', {
-      notic: (type: number, content: string, title: string) => {
-        return ipcRenderer.invoke('public-notic', type, content, title)
+      notic: (message: string, title: string) => {
+        return ipcRenderer.invoke('public-notic', message, title)
       }
     })
   } catch (error) {

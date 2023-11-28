@@ -34,7 +34,7 @@ export default function InterfaceDemo() {
     console.log(res)
   }
   const notic = () => {
-    ;(window as any).publicApi.notic()
+    ;(window as any).publicApi.notic('提示', '您有新的信息')
   }
   return (
     <div>

@@ -1,9 +1,12 @@
-import { app, shell, BrowserWindow, globalShortcut, ipcMain, Notification } from 'electron'
+import { app, shell, BrowserWindow, globalShortcut, ipcMain, Tray } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { getData, postDataUploadFile } from './interface'
+import { NotifiCoustom } from './inform/Notif'
+import { addMenus } from './menus'
 
+let tray: Tray
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -17,6 +20,8 @@ function createWindow(): void {
       sandbox: false
     }
   })
+  tray = new Tray(join(__dirname, '../../resources/icon.png'))
+  addMenus(mainWindow, tray)
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -74,13 +79,18 @@ app.whenReady().then(() => {
       return res
     }
   )
-  // 全局事件
-  ipcMain.handle('public-notic', (_event) => {
-    new Notification({
-      title: '测试',
-      body: '测试'
-    }).show()
+  // 系统通知全部原生通知
+  ipcMain.handle('public-notic', (_event, message: string, title: string) => {
+    const notif = new NotifiCoustom(tray)
+    notif.show({
+      type: 'Nomal',
+      options: {
+        title,
+        body: message
+      }
+    })
   })
+  ipcMain.handle('', () => {})
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
