@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import { store } from './store'
 import { ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
+import './userWoker'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <HashRouter>

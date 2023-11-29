@@ -1,3 +1,4 @@
+import CodeEditor from '@renderer/components/CodeEditor'
 import { UploadFiles } from '@renderer/components/utils/UploadFiles'
 import { Button } from 'antd'
 import axios from 'axios'
@@ -44,6 +45,8 @@ export default function InterfaceDemo() {
       <Button onClick={getData}>测试get请求</Button>
       <Button onClick={uploadFile}>上传文件</Button>
       <UploadFiles onChangeFn={setFileList} limit={1} fileList={fileList}></UploadFiles>
+      {/* 编辑器 */}
+      <CodeEditor></CodeEditor>
     </div>
   )
 }
