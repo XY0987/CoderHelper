@@ -10,6 +10,7 @@ import MessageBox from '../messagebox'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAsync } from '@renderer/hooks/utils'
+import { filttersMessage } from '@renderer/utils/fillterMessage'
 
 export default function ApplyHeader({ projectId }: { projectId?: number }) {
   const navigate = useNavigate()
@@ -71,34 +72,43 @@ export default function ApplyHeader({ projectId }: { projectId?: number }) {
     }
   ]
 
-  const { run, data = [], total, retry } = useAsync()
-  const [getInfoConfig, setGetInfoConfig] = useState({
-    messageIsRead: 0,
-    messageType: 0
-  })
-  const openFn = useCallback(() => {
-    setMessageIsReadApi({ messageType: getInfoConfig.messageType }).then(() => {
-      setIsOpen(true)
-    })
-  }, [getInfoConfig])
+  const { run, total, retry, data } = useAsync()
+  const [allData, setAllData] = useState<any[]>([])
 
-  const onClose = () => {
+  useEffect(() => {
+    if (!data) {
+      return
+    }
+    let arr = new Array(4)
+    arr[0] = filttersMessage(data, '0')
+    arr[1] = filttersMessage(data, '1')
+    arr[2] = filttersMessage(data, '2')
+    arr[3] = filttersMessage(data, '3')
+    setAllData(arr)
+  }, [data])
+
+  const openFn = useCallback(() => {
+    setIsOpen(true)
+  }, [])
+
+  const onClose = async () => {
     setIsOpen(false)
+    // 将所有消息设置为已读
+    await setMessageIsReadApi({})
     retry.current()
   }
 
   const fetchProjects = useCallback(
     () =>
       getMessageApi({
-        messageIsRead: getInfoConfig.messageIsRead,
-        messageType: getInfoConfig.messageType,
+        messageIsRead: 0,
         messageProjectId: projectId
       }),
-    [getInfoConfig]
+    []
   )
   useEffect(() => {
     run(fetchProjects(), { retry: fetchProjects })
-  }, [getInfoConfig, run, fetchProjects])
+  }, [run, fetchProjects])
   return (
     <div className={style.container}>
       <div className={style.operates}>
@@ -114,12 +124,7 @@ export default function ApplyHeader({ projectId }: { projectId?: number }) {
             </a>
           </Dropdown>
         </div>
-        <MessageBox
-          setGetInfoConfig={setGetInfoConfig}
-          data={data}
-          open={open}
-          onClose={onClose}
-        ></MessageBox>
+        <MessageBox data={allData} open={open} onClose={onClose}></MessageBox>
       </div>
       <div className={style.headerTitle}>CoderHelper</div>
     </div>

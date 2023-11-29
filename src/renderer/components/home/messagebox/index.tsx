@@ -2,58 +2,55 @@ import { Drawer, Tabs, TabsProps } from 'antd'
 
 import style from './index.module.scss'
 import EmptyNoData from '@renderer/components/utils/Empty'
+import { useState } from 'react'
 
 export default function MessageBox({
   open,
   onClose,
-  data,
-  setGetInfoConfig
+  data
 }: {
   open: boolean
   onClose: () => void
-  data: any
-  setGetInfoConfig: any
+  data: any[]
 }) {
+  // 根据messageType区分
+  const [messageType, setMessageType] = useState(0)
+
   const items: TabsProps['items'] = [
     {
       key: '0',
-      label: '分工信息'
+      label: `分工信息(${data[0] ? data[0].length : 0})`
     },
     {
       key: '1',
-      label: '接口信息'
+      label: `接口信息(${data[1] ? data[1].length : 0})`
     },
     {
       key: '2',
-      label: '召开会议'
+      label: `召开会议(${data[2] ? data[2].length : 0})`
     },
     {
       key: '3',
-      label: '系统通知'
+      label: `系统通知(${data[3] ? data[3].length : 0})`
     }
   ]
-  const onChange = (key: string) => {
-    setGetInfoConfig((value: any) => {
-      return {
-        ...value,
-        messageType: key
-      }
-    })
+  const onChange = async (key: string) => {
+    setMessageType(Number(key))
   }
 
   return (
-    <Drawer title="消息中心" placement="right" onClose={onClose} open={open}>
+    <Drawer title="消息中心" placement="right" onClose={onClose} open={open} width={500}>
       <Tabs defaultActiveKey="0" items={items} onChange={onChange} />
-      {data &&
-        data.map((item: any) => {
+      {data[0] &&
+        data[messageType].map((item: any) => {
           return (
             <div className={style.messageContainer} key={item.messageId}>
               <div className={style.messageTitle}>{item.messageTitle}</div>
-              <div className={style.messageContent}>{item.messageContent}</div>
+              <div className={style.messageContent}>{JSON.parse(item.messageContent).content}</div>
             </div>
           )
         })}
-      {data && data.length == 0 ? <EmptyNoData></EmptyNoData> : null}
+      {data[messageType] && data[messageType].length == 0 ? <EmptyNoData></EmptyNoData> : null}
     </Drawer>
   )
 }
