@@ -62,3 +62,10 @@ export const setMessageIsReadApi = (data: any) =>
     method: 'GET',
     params: data
   })
+
+export const getFileApi = () =>
+  myRequest.request({
+    url: '/auth/file',
+    method: 'GET',
+    responseType: 'blob'
+  })

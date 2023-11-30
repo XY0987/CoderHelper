@@ -4,7 +4,8 @@ import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-// @ts-ignore: worker 导入方式可以参考vite官网 https://cn.vitejs.dev/guide/features.html#web-workers
+import { getFileApi } from './aRequest/user'
+
 self.MonacoEnvironment = {
   // 提供一个定义worker路径的全局变量
   getWorker(_: any, label: string) {
@@ -24,4 +25,58 @@ self.MonacoEnvironment = {
   }
 }
 
-monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true)
+monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+  noSemanticValidation: true,
+  noSyntaxValidation: true
+})
+
+// 自定义
+monaco.languages.typescript.typescriptDefaults.addExtraLib(
+  ['declare class and {', 'static top()', 'static left()', '}'].join('\n')
+)
+
+var reader = new FileReader()
+const res = await getFileApi()
+let str: any = ''
+reader.readAsText(res, 'utf-8')
+reader.onload = function () {
+  str = reader.result
+  try {
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(str)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true)
+// var jsCode = ['"use strict"', '', 'Rectangle1.top()'].join('\n')
+// monaco.editor.create(document.getElementById('a') as any, {
+//   language: 'typescript',
+//   value: ''
+// })
+// const transSug = (items) => {
+//   const newSug = [...items, 'and', 'or', '(', ')'].map((item) => {
+//     return {
+//       label: item, // 显示的label
+//       detail: !items.includes(item) ? '符号' : '字段', // 描述
+//       insertText: item, // 选择后插入的value
+//       icon: items.includes(item)
+//     }
+//   })
+//   return newSug
+// }
+// monaco.languages.registerCompletionItemProvider('typescript', {
+//   // @ts-ignore
+//   provideCompletionItems: () => {
+//     const suggestions = transSug(['代码提示'])
+//     return {
+//       suggestions: suggestions.map((item) => ({
+//         ...item,
+//         kind: item.icon
+//           ? monaco.languages.CompletionItemKind.Variable // 图标
+//           : null
+//       }))
+//     }
+//   },
+//   triggerCharacters: ['a', 'b'] // 触发代码提示的关键字，ps：可以有多个
+// })

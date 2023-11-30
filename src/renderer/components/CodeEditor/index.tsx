@@ -8,15 +8,15 @@ export default function CodeEditor() {
 
   const [language, setlanguage] = useState<string>('typescript')
 
-  const handleCssCodeChange = (e) => {
-    console.log(e)
+  const handleCssCodeChange = (_e) => {
+    // console.log(e)
   }
 
   const handleChange = (value) => {
     setTheme(value)
   }
 
-  const langulangeChange = (value) => {
+  const langulangeChange = (value: any) => {
     setlanguage(value)
   }
 
@@ -35,7 +35,7 @@ export default function CodeEditor() {
           ]}
         />
         <Select
-          defaultValue="javascript"
+          defaultValue="typescript"
           style={{ width: 120 }}
           onChange={langulangeChange}
           options={[
@@ -43,7 +43,8 @@ export default function CodeEditor() {
             { value: 'typescript', label: 'typescript' },
             { value: 'css', label: 'css' },
             { value: 'json', label: 'json' },
-            { value: 'md', label: 'markdown' }
+            { value: 'md', label: 'markdown' },
+            { value: 'react', label: 'react' }
           ]}
         />
       </div>
@@ -59,3 +60,51 @@ export default function CodeEditor() {
     </div>
   )
 }
+
+// import { useRef } from 'react'
+// import MonacoEditor from 'react-monaco-editor'
+// const Index = () => {
+//   const editorRef = useRef()
+//   const transSug = (items) => {
+//     const newSug = [...items, 'and', 'or', '(', ')'].map((item) => {
+//       return {
+//         label: item, // 显示的label
+//         detail: !items.includes(item) ? '符号' : '字段', // 描述
+//         insertText: item, // 选择后插入的value
+//         icon: items.includes(item)
+//       }
+//     })
+//     return newSug
+//   }
+//   const editorDidMount = (editor, monaco) => {
+//     const suggestions = transSug(['代码提示'])
+//     if (suggestions.length) {
+//       editorRef.current = monaco.languages.registerCompletionItemProvider('plaintext', {
+//         provideCompletionItems() {
+//           return {
+//             suggestions: suggestions.map((item) => ({
+//               ...item,
+//               kind: item.icon
+//                 ? monaco.languages.CompletionItemKind.Variable // 图标
+//                 : null
+//             }))
+//           }
+//         },
+//         triggerCharacters: ['a', 'b'] // 触发代码提示的关键字，ps：可以有多个
+//       })
+//     }
+//   }
+//   return (
+//     <div>
+//       <MonacoEditor
+//         width="500px"
+//         theme="vs-dark"
+//         height="300px"
+//         language="plaintext" //注意此处language必须与 monaco 注册的代码提示里的保持一致
+//         editorDidMount={editorDidMount}
+//       />
+//     </div>
+//   )
+// }
+
+// export default Index
