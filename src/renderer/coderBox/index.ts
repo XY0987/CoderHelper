@@ -9,8 +9,7 @@ import {
   EventsType,
   LoadersType
 } from '@renderer/types/coderBox'
-import RightMenu from '@right-menu/core'
-import { generateMenuOptions, allIcon } from './config'
+import { allIcon } from './config'
 import HTMLLoader from './loader/html-loader'
 
 import './style/index.scss'
@@ -265,18 +264,7 @@ export default class MiniCoderBox {
   }
 
   // 初始化菜单
-  private initMenu() {
-    // 绑定菜单事件
-    new RightMenu(
-      {
-        el: this.el.querySelector('.coderBox-setting') as HTMLElement,
-        theme: 'mac',
-        // @ts-ignore
-        mode: 'click'
-      },
-      generateMenuOptions.call(this)
-    )
-  }
+  private initMenu() {}
 
   // 初始化事件
   private initEvent() {
@@ -338,7 +326,7 @@ export default class MiniCoderBox {
     // 替换顶部 url
     if (currFile.urlField) setQuery({ [currFile.urlField]: codeStr })
     // 是否自动运行
-    defaultConfig.autoRun && this.run()
+    defaultConfig.autoRun && this.run(true)
     // 触发 change 回调
     events.onChange?.()
   }
@@ -370,7 +358,7 @@ export default class MiniCoderBox {
   // 设置内容(解析后的内容)
   public setValue(value: string) {
     this.editor.setValue(value)
-    this.run()
+    this.run(true)
   }
   // 获取内容
   public getValue() {

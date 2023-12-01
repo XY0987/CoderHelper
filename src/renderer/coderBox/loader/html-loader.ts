@@ -1,6 +1,6 @@
 import { LoaderFunctionType } from '@renderer/types/coderBox'
 import BaseLoader from './base-loader'
-import { getCssLibs, getJsLibs, getScriptForTab, getEsmsInitOptions } from '.'
+import { getCssLibs, getJsLibs, getScriptForTab, getEsmsInitOptions } from './index'
 
 const HTMLLoader: LoaderFunctionType = async function (content, config) {
   const cssLibs = await getCssLibs.call(this, config)

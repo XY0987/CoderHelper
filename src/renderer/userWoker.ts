@@ -4,6 +4,14 @@ import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+
+import prettier from 'prettier/standalone'
+import parserTypeScript from 'prettier/plugins/typescript'
+import parseBabel from 'prettier/plugins/babel'
+import parseHtml from 'prettier/plugins/html'
+import parseEsTree from 'prettier/plugins/estree'
+import parseMd from 'prettier/plugins/markdown'
+
 import { getFileApi } from './aRequest/user'
 
 self.MonacoEnvironment = {
@@ -25,6 +33,7 @@ self.MonacoEnvironment = {
   }
 }
 
+// 关闭报错
 monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
   noSemanticValidation: true,
   noSyntaxValidation: true
@@ -47,6 +56,23 @@ reader.onload = function () {
     console.log(error)
   }
 }
+
+monaco.languages.registerDocumentFormattingEditProvider('typescript', {
+  provideDocumentFormattingEdits(model) {
+    let code = model.getValue()
+    prettier
+      .format(code, {
+        parser: 'typescript',
+        jsxSingleQuote: true,
+        plugins: [parseBabel, parseEsTree, parserTypeScript, parseMd, parseHtml],
+        vueIndentScriptAndStyle: true
+      })
+      .then((res) => {
+        model.setValue(res)
+      })
+    return []
+  }
+})
 
 // monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true)
 // var jsCode = ['"use strict"', '', 'Rectangle1.top()'].join('\n')
