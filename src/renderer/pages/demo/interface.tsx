@@ -40,7 +40,7 @@ export default function InterfaceDemo() {
     ;(window as any).publicApi.notic('提示', '您有新的信息')
   }
   const jump = () => {
-    navigate('/inter')
+    navigate('/user')
   }
   return (
     <div>

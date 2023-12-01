@@ -1,0 +1,44 @@
+// 全局公共样式，随后根据内容进行补充
+//引入图标字体样式
+@import url('//at.alicdn.com/t/c/font_4262743_q2jmpathibh.css');
+$btnSuccessColor: '';
+$activecolor: 'rgb(50, 153, 255)';
+body {
+  font-size: 14px;
+  color: #333;
+  font-family:
+    OPPOSans2,
+    PingFang SC,
+    Microsoft YaHei,
+    Helvetica Neue,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+ul,
+li {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+* {
+  padding: 0;
+  margin: 0;
+}
+.ant-menu-submenu-arrow {
+  left: 12%;
+}
+.ant-tabs-content-holder {
+  overflow: auto;
+}
+.ant-space-item {
+  font-size: 12px;
+}
