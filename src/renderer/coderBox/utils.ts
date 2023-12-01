@@ -4,24 +4,17 @@ export const has = (data: object, key: string | number): boolean => {
   return Object.prototype.hasOwnProperty.call(data, key)
 }
 
-export const debounce = (fn: Function, wait = 300) => {
-  const state = {
-    timer: 0,
-    immediate: false
+export const debounceFn = (fn, delay = 1000, that: any) => {
+  let time: any = null
+  function _debounce() {
+    if (time !== null) {
+      clearTimeout(time)
+    }
+    time = setTimeout(() => {
+      fn.call(that)
+    }, delay)
   }
-  return function (this: unknown, immediate = false) {
-    state.immediate = immediate
-    if (state.timer) window.clearTimeout(state.timer)
-    state.timer = window.setTimeout(
-      () => {
-        fn.apply(this, arguments)
-        clearTimeout(state.timer)
-        state.timer = 0
-        state.immediate = false
-      },
-      state.immediate ? 0 : wait
-    )
-  }
+  return _debounce.bind(that)
 }
 //
 export const getQuery = (search = window.location.search) => {
@@ -34,7 +27,7 @@ export const getQuery = (search = window.location.search) => {
   })
   return query
 }
-
+// 讲内容设置到url中
 export const setQuery = (query: { [key: string]: string | number }) => {
   const oldQuery = getQuery()
   const arr: any[] = []

@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor'
-import { debounce, getQuery, FileLoader, encode, decode, define, setQuery } from './utils'
+import { debounceFn, getQuery, FileLoader, encode, decode, define, setQuery } from './utils'
 import {
   OptionsType,
   ResourceType,
@@ -53,7 +53,7 @@ export default class MiniCoderBox {
     // 初始化一些 getter
     define(this, 'currFile', () => this.fileList[this.fileIndex])
     // 设置防抖
-    this.run = debounce(this.render, this.defaultConfig.autoRunInterval).bind(this)
+    this.run = this.render
     // 初始化
     this.init().then(() => {
       this.events.onLoad?.()
@@ -338,7 +338,7 @@ export default class MiniCoderBox {
     this.editor = monaco.editor.create(document.querySelector('.coderBox-code') as any, {
       language: 'typescript'
     })
-    this.editor.onDidChangeModelContent(this.handleChange.bind(this))
+    this.editor.onDidChangeModelContent(debounceFn(this.handleChange, 500, this))
   }
 
   // 切换上边的Tab
