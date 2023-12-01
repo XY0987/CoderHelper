@@ -1,5 +1,5 @@
 import { RouteObject } from 'react-router'
 
-const InterfaceRoutes: RouteObject[] = []
+const userChildren: RouteObject[] = []
 
-export default InterfaceRoutes
+export default userChildren

@@ -1,12 +1,14 @@
 // index.ts 文件
 import { configureStore } from '@reduxjs/toolkit'
 import userSlice from './userSlice'
+import InterSlice from './InterManage'
 import { useSelector, TypedUseSelectorHook, shallowEqual, useDispatch } from 'react-redux'
 // configureStore创建一个redux数据
 export const store = configureStore({
   // 合并多个Slice
   reducer: {
-    user: userSlice
+    user: userSlice,
+    Inter: InterSlice
   }
 })
 const RootStatetype = store.getState() //获取返回值对象

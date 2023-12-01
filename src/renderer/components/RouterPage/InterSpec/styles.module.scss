@@ -1,0 +1,17 @@
+.root {
+  width: 100%;
+  .markdown {
+    width: 100%;
+    height: auto;
+    position: relative;
+    .extend {
+      position: absolute;
+      z-index: 99999;
+      right: 5px;
+      top: 5px;
+      .tag {
+        cursor: pointer;
+      }
+    }
+  }
+}

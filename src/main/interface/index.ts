@@ -21,7 +21,7 @@ export const getData = (url: string, data: any) => {
 export const postDataUploadFile = (url: string, data: any, filePath: string) => {
   return new Promise((resolve, reject) => {
     const formdata = new FormData()
-    for (let key in data) {
+    for (const key in data) {
       formdata.append(key, data[key])
     }
     formdata.append('file', fs.createReadStream(filePath))

@@ -1,0 +1,79 @@
+#root {
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  display: flex;
+  .LeftColumn {
+    padding: 5px;
+    height: 100vh;
+    box-sizing: border-box;
+    width: 80px;
+    padding-top: 50px;
+    background-color: rgb(249, 250, 251);
+    .backHome {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      margin: auto;
+      justify-content: center;
+      align-items: center;
+      border-radius: 15px;
+      background-color: floralwhite;
+      background-size: cover;
+      margin-bottom: 20px;
+      cursor: pointer;
+      .backHomeMask {
+        transition-duration: 0.3s;
+        opacity: 0;
+        top: 0px;
+        width: 50px;
+        left: 0px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        background-color: white;
+        i {
+          font-size: 36px;
+        }
+      }
+      &:hover {
+        .backHomeMask {
+          opacity: 1;
+        }
+      }
+    }
+    .LeftList {
+      width: 100%;
+      height: auto;
+      & > li {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        text-align: center;
+        align-content: center;
+        cursor: pointer;
+        & > p {
+          margin-bottom: 5px;
+          border-radius: 10px;
+        }
+      }
+      & > li:hover {
+        background-color: rgb(240, 241, 243);
+        color: rgb(50, 153, 255);
+      }
+      .active {
+        background-color: rgb(240, 241, 243);
+        color: rgb(50, 153, 255);
+      }
+    }
+  }
+  .RightColumn {
+    flex: 1;
+    height: 100vh;
+  }
+}

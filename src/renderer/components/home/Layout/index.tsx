@@ -18,6 +18,7 @@ export default function HomeLayout() {
     label: item.label
   }))
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onClick = (e: any) => {
     message.destroy()
     navigate(e.key)

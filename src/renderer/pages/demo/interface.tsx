@@ -3,9 +3,11 @@ import { UploadFiles } from '@renderer/components/utils/UploadFiles'
 import { Button } from 'antd'
 import axios from 'axios'
 import { useState } from 'react'
+import { useNavigate } from 'react-router'
 
 export default function InterfaceDemo() {
   const [fileList, setFileList] = useState<any[]>([])
+  const navigate = useNavigate()
   const localGet = () => {
     axios({
       method: 'GET',
@@ -37,8 +39,12 @@ export default function InterfaceDemo() {
   const notic = () => {
     ;(window as any).publicApi.notic('提示', '您有新的信息')
   }
+  const jump = () => {
+    navigate('/inter')
+  }
   return (
     <div>
+      <Button onClick={jump}>跳转</Button>
       <Button onClick={notic}>测试通知</Button>
       <hr />
       <Button onClick={localGet}>本地请求</Button>

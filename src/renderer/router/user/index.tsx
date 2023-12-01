@@ -1,10 +1,15 @@
 import AuthUser from '@renderer/components/auth/AuthUser'
 import InterfaceDemo from '@renderer/pages/demo/interface'
+import UserLayout from '@renderer/pages/interFacepage'
 import Home from '@renderer/pages/home'
 import ProjectCollect from '@renderer/pages/user/collect'
 import ProjectManage from '@renderer/pages/user/project'
 import PublicProject from '@renderer/pages/user/publicProject'
 import { Navigate, RouteObject } from 'react-router'
+import InterManagement from '@renderer/pages/interFacepage/InterManagement'
+import AutomatedTesting from '@renderer/pages/interFacepage/AutomatedTesting'
+import ItemSetting from '@renderer/pages/interFacepage/ItemSetting'
+import InterHistory from '@renderer/pages/interFacepage/InterHistory'
 
 const demoRouter: RouteObject[] = [
   {
@@ -34,6 +39,29 @@ const userRoutes: RouteObject[] = [
       {
         path: '*',
         element: <Navigate to="/home/project" replace></Navigate>
+      }
+    ]
+  },
+  {
+    path: '/inter',
+    element: <AuthUser title="首页" Element={UserLayout}></AuthUser>,
+    children: [
+      {
+        path: 'intermanage', //接口管理
+        element: <InterManagement />
+      },
+      {
+        path: 'automatedtesting', //自动化测试
+        element: <AutomatedTesting />
+      },
+      {
+        path: 'itemseting', //项目设置
+        element: <ItemSetting />
+      },
+      {
+        //接口历史
+        path: 'interhistory',
+        element: <InterHistory />
       }
     ]
   }

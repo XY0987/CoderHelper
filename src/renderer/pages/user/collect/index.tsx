@@ -10,6 +10,7 @@ import { useAsync } from '@renderer/hooks/utils'
 import { Dropdown } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export default function ProjectCollect() {
   const { run, data = [], retry, total, isLoading, isNodata } = useAsync()
   const [pagingConfig, setPagingConfig] = useState({
@@ -64,7 +65,6 @@ export default function ProjectCollect() {
       </Dropdown>
     )
   }
-
   return (
     <div>
       {isLoading ? (

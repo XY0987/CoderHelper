@@ -35,7 +35,7 @@ monaco.languages.typescript.typescriptDefaults.addExtraLib(
   ['declare class and {', 'static top()', 'static left()', '}'].join('\n')
 )
 
-var reader = new FileReader()
+const reader = new FileReader()
 const res = await getFileApi()
 let str: any = ''
 reader.readAsText(res, 'utf-8')
