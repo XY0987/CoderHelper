@@ -6,7 +6,8 @@ import { LoaderFunctionType } from '@renderer/types/coderBox'
 const coderBoxReactLoader: LoaderFunctionType = async function (value, config) {
   const cssLibs = await getCssLibs.call(this, config)
   const jsLibs = await getJsLibs.call(this, config)
-  console.log(config['importMap'])
+  // 引入的import资源
+  // console.log(config['importMap'])
 
   const esModules = { '__APP__.jsx': transform(value, { presets: ['react'] }).code }
   const content = `

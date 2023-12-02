@@ -156,11 +156,8 @@ export default class MiniCoderBox {
     // 初始化dom结构
     this.initDom()
     // 初始化事件
-    this.initEvent()
     // 初始化编辑器
     this.initCodeMirror()
-    // 初始化菜单栏
-    this.initMenu()
     // 初始主题
     this.triggleTheme()
     // 初始化编辑器内容
@@ -199,11 +196,6 @@ export default class MiniCoderBox {
       .join('\n')
     el.innerHTML = `
       <div class="coderBox-head">
-        <div class="coderBox-setting">
-          <span class="coderBox-icon icon-active">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 14C9.55228 14 10 13.5523 10 13C10 12.4477 9.55228 12 9 12C8.44771 12 8 12.4477 8 13C8 13.5523 8.44771 14 9 14Z" fill="currentColor" /><path d="M16 13C16 13.5523 15.5523 14 15 14C14.4477 14 14 13.5523 14 13C14 12.4477 14.4477 12 15 12C15.5523 12 16 12.4477 16 13Z" fill="currentColor" /><path fill-rule="evenodd" clip-rule="evenodd" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 11.1637 19.8717 10.3574 19.6337 9.59973C18.7991 9.82556 17.9212 9.94604 17.0152 9.94604C13.2921 9.94604 10.0442 7.91139 8.32277 4.89334C5.75469 6.22486 4 8.90751 4 12C4 16.4183 7.58172 20 12 20Z" fill="currentColor" /></svg>
-          <span>
-        </div>
         &ensp;
         <div class="coderBox-tab">
           ${this.fileList
@@ -240,7 +232,6 @@ export default class MiniCoderBox {
     this.lineEl = el.querySelector('.coderBox-gutter')!
     this.bodyEl = el.querySelector('.coderBox-body')!
     // 布局
-    this.triggleDirection(defaultConfig.direction)
     // 绑定事件
     const addEvent = (className: string, cb: () => void) => {
       el.querySelector(className)?.addEventListener('click', cb)
@@ -250,10 +241,6 @@ export default class MiniCoderBox {
       this.run(true)
     })
     addEvent('.coderBox-icon-reload', () => this.run(true))
-    addEvent('.coderBox-icon-left-layout', () => this.triggleDirection('row'))
-    addEvent('.coderBox-icon-right-layout', () => this.triggleDirection('row-reverse'))
-    addEvent('.coderBox-icon-top-layout', () => this.triggleDirection('column'))
-    addEvent('.coderBox-icon-bottom-layout', () => this.triggleDirection('column-reverse'))
     // 点击 tab 标签页
     const tabBar = el.querySelector('.coderBox-tab')!
     tabBar.addEventListener('click', (e) => {
@@ -262,8 +249,6 @@ export default class MiniCoderBox {
       )
       if (targetEl) {
         this.fileIndex = Number(targetEl.getAttribute('data-index'))
-        // 切换 tab 页面
-        this.changeTab()
         // 设置样式
         const items = tabBar.children
         for (const item of items) {
@@ -274,56 +259,6 @@ export default class MiniCoderBox {
     })
   }
 
-  // 初始化菜单
-  private initMenu() {}
-
-  // 初始化事件
-  private initEvent() {
-    const { el, codeEl, defaultConfig } = this
-    if (!defaultConfig.draggable) {
-      this.addClass(this.lineEl, 'no-dragging')
-      return
-    }
-    const maskEl = el.querySelector('.coderBox-mask') as HTMLDivElement
-    let boxW: number, boxH: number, boxX: number, boxY: number, lineX: number, lineY: number
-    this.lineEl.addEventListener('mousedown', (e) => {
-      lineX = e.offsetX
-      lineY = e.offsetY
-      this.isClick = true
-      const { x, y, width, height } = this.bodyEl.getBoundingClientRect()
-      boxW = width
-      boxH = height
-      boxX = x
-      boxY = y
-      maskEl.style.display = 'block'
-    })
-    el.addEventListener('mouseup', (_e) => {
-      this.isClick = false
-      maskEl.style.display = 'none'
-    })
-    el.addEventListener('mousemove', (e) => {
-      if (!this.isClick) return
-      let val: number = 0.5
-      switch (defaultConfig.direction) {
-        case 'row':
-          val = (e.clientX - boxX - lineX) / boxW
-          codeEl.style.width = val * 100 + '%'
-          break
-        case 'row-reverse':
-          val = 1 - (e.clientX - boxX + lineX) / boxW
-          codeEl.style.width = val * 100 + '%'
-          break
-        case 'column':
-          val = (e.clientY - boxY - lineY) / boxH
-          codeEl.style.height = val * 100 + '%'
-          break
-        case 'column-reverse':
-          val = 1 - (e.clientY - boxY + lineY) / boxH
-          codeEl.style.height = val * 100 + '%'
-          break
-      }
-    })
-  }
   // 注册格式化语言
   private initRegLanguange() {
     const type = this.type
@@ -372,20 +307,6 @@ export default class MiniCoderBox {
     this.editor.onDidChangeModelContent(debounceFn(this.handleChange, 500, this))
   }
 
-  // 切换上边的Tab
-  private changeTab() {
-    const currFile = this.currFile
-    if (this.templateTypeSet.has(currFile.type)) {
-      this.currTemplate = currFile
-    }
-    // 切换语言
-    this.changeLang()
-    this.setValue(currFile.value || currFile.defaultValue)
-  }
-
-  // 切换语言
-  private changeLang() {}
-
   // 设置内容(解析后的内容)
   public setValue(value: string) {
     this.editor.setValue(value)
@@ -394,11 +315,6 @@ export default class MiniCoderBox {
   // 获取内容
   public getValue() {
     return this.editor.getValue()
-  }
-
-  // 获取json字符串
-  public getJSONString() {
-    return JSON.stringify(this.getValue()).replace(/<\/script>/g, '<\\/script>')
   }
 
   // 设置内容(包括解析)
@@ -444,38 +360,6 @@ export default class MiniCoderBox {
 
   // 切换主题
   public triggleTheme(_theme = this.defaultConfig.theme) {}
-
-  // 切换布局模式
-  public triggleDirection(direction: DefaultConfigType['direction'] = 'row') {
-    const { codeEl, defaultConfig } = this
-    const gutter = ['100%', '0%'].indexOf(defaultConfig.editorRange) > -1 ? '0px' : '5px'
-    const renderEl = this.el.querySelector('.coderBox-render') as HTMLDivElement
-    // 左右布局 / 上下布局
-    if (direction.indexOf('row') > -1) {
-      this.setStyle(codeEl, {
-        width: defaultConfig.editorRange,
-        height: '100%'
-      })
-      this.setStyle(renderEl, {
-        width: defaultConfig.renderRange,
-        height: '100%'
-      })
-      this.setStyle(this.lineEl, { width: gutter, height: '100%' })
-    } else if (direction.indexOf('column') > -1) {
-      this.setStyle(codeEl, {
-        width: '100%',
-        height: defaultConfig.editorRange
-      })
-      this.setStyle(renderEl, {
-        width: '100%',
-        height: defaultConfig.renderRange
-      })
-      this.setStyle(this.lineEl, { width: '100%', height: gutter })
-    } else return
-    // 设置flex布局
-    defaultConfig.direction = direction
-    this.setStyle(this.bodyEl, { 'flex-direction': direction })
-  }
 
   // 将打包的组件渲染到页面
   public async render(isReload = false) {

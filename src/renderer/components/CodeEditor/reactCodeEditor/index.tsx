@@ -4,7 +4,10 @@ import { getConfig } from './getReactConfig'
 
 export default function ReactCodeEditor() {
   useEffect(() => {
-    new MiniCoderBox(getConfig() as any)
+    const edit = new MiniCoderBox(getConfig() as any)
+    return () => {
+      edit.editor.dispose()
+    }
   })
   return <div style={{ height: '800px' }} id="coderBoxContainerReact"></div>
 }
