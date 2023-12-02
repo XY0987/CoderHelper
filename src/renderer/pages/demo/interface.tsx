@@ -55,8 +55,8 @@ export default function InterfaceDemo() {
       <UploadFiles onChangeFn={setFileList} limit={1} fileList={fileList}></UploadFiles>
       {/* 编辑器 */}
       {/* <ReactCodeEditor></ReactCodeEditor> */}
-      <VueCodeEditor></VueCodeEditor>
-      {/* <MarkdownCodeEditor></MarkdownCodeEditor> */}
+      {/* <VueCodeEditor></VueCodeEditor> */}
+      <MarkdownCodeEditor></MarkdownCodeEditor>
     </div>
   )
 }
