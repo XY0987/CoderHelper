@@ -7,6 +7,8 @@ import { store } from './store'
 import { ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 import './userWoker'
+import './index.scss'
+import 'normalize.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <HashRouter>

@@ -1,6 +1,6 @@
 import AuthUser from '@renderer/components/auth/AuthUser'
 import InterfaceDemo from '@renderer/pages/demo/interface'
-import UserLayout from '@renderer/pages/interFacepage'
+import interFacepageLayout from '@renderer/components/interFacepageLayout'
 import Home from '@renderer/pages/home'
 import ProjectCollect from '@renderer/pages/user/collect'
 import ProjectManage from '@renderer/pages/user/project'
@@ -43,8 +43,8 @@ const userRoutes: RouteObject[] = [
     ]
   },
   {
-    path: '/inter',
-    element: <AuthUser title="首页" Element={UserLayout}></AuthUser>,
+    path: '/user',
+    element: <AuthUser title="首页" Element={interFacepageLayout}></AuthUser>,
     children: [
       {
         path: 'intermanage', //接口管理
