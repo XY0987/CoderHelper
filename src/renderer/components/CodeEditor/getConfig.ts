@@ -21,7 +21,8 @@ export const getCodeBoxConfigReact = (
     loaders,
     defaultConfig: {
       height: '100vh'
-    }
+    },
+    type: 'react'
   }
 }
 
@@ -44,6 +45,7 @@ export const getCodeBoxConfigVue = (
     resource: resource,
     defaultConfig: {
       height: '100vh'
-    }
+    },
+    type: 'vue'
   }
 }

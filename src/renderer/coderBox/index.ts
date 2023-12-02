@@ -12,6 +12,14 @@ import {
 import { allIcon } from './config'
 import HTMLLoader from './loader/html-loader'
 
+import prettier from 'prettier/standalone'
+import parserTypeScript from 'prettier/plugins/typescript'
+import parseBabel from 'prettier/plugins/babel'
+import parseHtml from 'prettier/plugins/html'
+import parseEsTree from 'prettier/plugins/estree'
+import parseMd from 'prettier/plugins/markdown'
+import parseCss from 'prettier/plugins/postcss'
+
 import './style/index.scss'
 import './style/theme.scss'
 
@@ -46,8 +54,11 @@ export default class MiniCoderBox {
   bodyEl!: HTMLDivElement
   ldqResource: string[] = []
   public run: Function
+  type: string | undefined
   // 初始化
   constructor(options = {} as OptionsType) {
+    this.type = options.type ? options.type : 'react'
+    this.initRegLanguange()
     // 初始化配置项
     this.initOptions(options)
     // 初始化一些 getter
@@ -310,6 +321,26 @@ export default class MiniCoderBox {
           val = 1 - (e.clientY - boxY + lineY) / boxH
           codeEl.style.height = val * 100 + '%'
           break
+      }
+    })
+  }
+  // 注册格式化语言
+  private initRegLanguange() {
+    const type = this.type
+    monaco.languages.registerDocumentFormattingEditProvider('typescript', {
+      provideDocumentFormattingEdits(model) {
+        let code = model.getValue()
+        prettier
+          .format(code, {
+            parser: type === 'vue' ? 'vue' : 'typescript',
+            jsxSingleQuote: true,
+            plugins: [parseBabel, parseEsTree, parseCss, parserTypeScript, parseMd, parseHtml],
+            vueIndentScriptAndStyle: true
+          })
+          .then((res) => {
+            model.setValue(res)
+          })
+        return []
       }
     })
   }
