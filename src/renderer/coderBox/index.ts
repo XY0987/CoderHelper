@@ -20,9 +20,6 @@ import parseEsTree from 'prettier/plugins/estree'
 import parseMd from 'prettier/plugins/markdown'
 import parseCss from 'prettier/plugins/postcss'
 
-import './style/index.scss'
-import './style/theme.scss'
-
 // let name = '1.0'
 let version = '1.0'
 
