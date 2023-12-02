@@ -3,7 +3,7 @@ import MinicoderBox from '../index'
 import { ElementGenerator } from '../utils'
 
 const reg = /\:\/\/.*/
-
+// 获取cssLibs(在config的resource中或config中)
 export async function getCssLibs(this: MinicoderBox, config: LocalFileType): Promise<string[]> {
   const { resource } = this
   return [

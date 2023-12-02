@@ -1,4 +1,5 @@
 import ReactCodeEditor from '@renderer/components/CodeEditor/reactCodeEditor'
+// import VueCodeEditor from '@renderer/components/CodeEditor/vueCodeEditor'
 import { UploadFiles } from '@renderer/components/utils/UploadFiles'
 import { Button } from 'antd'
 import axios from 'axios'
@@ -53,6 +54,7 @@ export default function InterfaceDemo() {
       <UploadFiles onChangeFn={setFileList} limit={1} fileList={fileList}></UploadFiles>
       {/* 编辑器 */}
       <ReactCodeEditor></ReactCodeEditor>
+      {/* <VueCodeEditor></VueCodeEditor> */}
     </div>
   )
 }

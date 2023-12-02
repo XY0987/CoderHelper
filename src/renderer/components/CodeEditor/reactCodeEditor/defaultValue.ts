@@ -1,3 +1,4 @@
+// 默认显示的内容，分为无限滚动模板，后台模板等
 export const defaultValue = `import React, { useState } from 'react'
 import antd from 'antd'
 

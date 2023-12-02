@@ -6,5 +6,5 @@ export default function ReactCodeEditor() {
   useEffect(() => {
     new MiniCoderBox(getConfig() as any)
   })
-  return <div style={{ height: '800px' }} id="coderBoxContainer"></div>
+  return <div style={{ height: '800px' }} id="coderBoxContainerReact"></div>
 }

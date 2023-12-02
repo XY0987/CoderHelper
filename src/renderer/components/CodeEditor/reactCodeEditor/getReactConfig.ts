@@ -1,11 +1,11 @@
 import coderBoxReactLoader from '@renderer/coderBox/loader/react-loader'
 import { defaultValue } from './defaultValue'
-import { getCodeBoxConfig } from '../getConfig'
+import { getCodeBoxConfigReact } from '../getConfig'
 
 export const getConfig = () => {
-  return getCodeBoxConfig(
+  return getCodeBoxConfigReact(
     defaultValue,
-    '#coderBoxContainer',
+    '#coderBoxContainerReact',
     'App.tsx',
     {
       '.tsx': [coderBoxReactLoader]
