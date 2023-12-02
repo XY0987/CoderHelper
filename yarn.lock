@@ -1193,11 +1193,6 @@
   resolved "https://registry.npmmirror.com/@remix-run/router/-/router-1.11.0.tgz#e0e45ac3fff9d8a126916f166809825537e9f955"
   integrity sha512-BHdhcWgeiudl91HvVa2wxqZjSHbheSgIiDvxrF1VjFzBzpTtuDPkOdOi3Iqvc08kXtFkLjhbS+ML9aM8mJS+wQ==
 
-"@right-menu/core@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@right-menu/core/-/core-0.0.9.tgz#269abf6d8b61387db732386b847b46d32c9e89b7"
-  integrity sha512-UFoXkjBtqJBHxz3s6BTF3O+dlzlZek9fpODk7Mo1vT+0y7KTb21/QB3gN1bRJLT+O9kGM6Of8VN0uS3KVNcdRA==
-
 "@sindresorhus/is@^4.0.0":
   version "4.6.0"
   resolved "https://registry.npmmirror.com/@sindresorhus/is/-/is-4.6.0.tgz#3c7c9c46e678feefe7a2e5bb609d3dbd665ffb3f"
