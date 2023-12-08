@@ -84,4 +84,5 @@ export type OptionsType = {
   publicConfig?: PublicConfigType
   defaultConfig?: DefaultConfigType
   events?: EventsType
+  type?: 'vue' | 'react'
 }

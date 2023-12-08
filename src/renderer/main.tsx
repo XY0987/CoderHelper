@@ -9,6 +9,8 @@ import zhCN from 'antd/lib/locale/zh_CN'
 import './userWoker'
 import './index.scss'
 import 'normalize.css'
+import './style/index.scss'
+import './style/theme.scss'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <HashRouter>
