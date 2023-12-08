@@ -1,5 +1,5 @@
 import { Space, Tag } from 'antd'
-import React, { memo } from 'react'
+import { memo } from 'react'
 import { FC, ReactNode } from 'react'
 interface Props {
   children?: ReactNode
