@@ -11,7 +11,7 @@ export default function ProjectItem({
 }) {
   const navigate = useNavigate()
   const jumpToProject = (projectId: number) => {
-    navigate(`/inter?projectId=${projectId}`)
+    navigate(`/user/intermanage?projectId=${projectId}`)
   }
   return (
     <div className={style.container}>
