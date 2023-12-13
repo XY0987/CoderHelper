@@ -10,8 +10,8 @@ let tray: Tray
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1200,
+    height: 800,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -22,7 +22,6 @@ function createWindow(): void {
   })
   tray = new Tray(join(__dirname, '../../resources/icon.png'))
   addMenus(mainWindow, tray)
-
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })

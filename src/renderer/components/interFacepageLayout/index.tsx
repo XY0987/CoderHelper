@@ -30,7 +30,7 @@ const UseLayout: FC<Props> = () => {
   }
   //返回首页
   const goback = () => {
-    navigate('/')
+    navigate('/home')
   }
   //改变路由
   const changerouter = (url: string) => {
@@ -68,13 +68,18 @@ const UseLayout: FC<Props> = () => {
             <p>接口管理</p>
           </li>
           <li
-            onClick={() => changerouter(`/automatedtesting?projectId=${ProjectID}`)}
-            className={
-              currentPage === `/automatedtesting?projectId=${ProjectID}` ? styles.active : ''
-            }
+            onClick={() => changerouter(`/demand?projectId=${ProjectID}`)}
+            className={currentPage === `/demand?projectId=${ProjectID}` ? styles.active : ''}
           >
             <i className="iconfont icon-xinicon_huabanfuben"></i>
-            <p>自动化测试</p>
+            <p>需求管理</p>
+          </li>
+          <li
+            onClick={() => changerouter(`/meeting?projectId=${ProjectID}`)}
+            className={currentPage === `/meeting?projectId=${ProjectID}` ? styles.active : ''}
+          >
+            <i className="iconfont icon-xinicon_huabanfuben"></i>
+            <p>会议</p>
           </li>
 
           <li
