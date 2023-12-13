@@ -69,3 +69,17 @@ export const getFileApi = () =>
     method: 'GET',
     responseType: 'blob'
   })
+
+export const getProjectInfoApi = (data: any) =>
+  myRequest.request({
+    url: '/project/getProjectInfo',
+    method: 'GET',
+    params: data
+  })
+
+export const addProjectDemandApi = (data: any) =>
+  myRequest.request({
+    url: '/project/addProjectDemand',
+    method: 'POST',
+    data
+  })

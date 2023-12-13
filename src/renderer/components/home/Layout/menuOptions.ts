@@ -2,6 +2,7 @@ import {
   ApartmentOutlined,
   AppstoreOutlined,
   CheckSquareOutlined,
+  ScissorOutlined,
   StarOutlined
 } from '@ant-design/icons'
 
@@ -28,6 +29,11 @@ export const menuItem = [
     path: '/home/publicProject',
     icon: ApartmentOutlined,
     label: '公开项目'
+  },
+  {
+    path: '/home/tool',
+    icon: ScissorOutlined,
+    label: '代码工具'
   },
   ...demoMenuItem
 ]

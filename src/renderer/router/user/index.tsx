@@ -1,6 +1,7 @@
 import AuthUser from '@renderer/components/auth/AuthUser'
 import InterfaceDemo from '@renderer/pages/demo/interface'
 import Home from '@renderer/pages/home'
+import Tool from '@renderer/pages/tool'
 import ProjectCollect from '@renderer/pages/user/collect'
 import ProjectManage from '@renderer/pages/user/project'
 import PublicProject from '@renderer/pages/user/publicProject'
@@ -29,6 +30,10 @@ const userRoutes: RouteObject[] = [
       {
         path: 'publicProject',
         element: <AuthUser title="公开项目" Element={PublicProject}></AuthUser>
+      },
+      {
+        path: 'tool',
+        element: <AuthUser title="工具" Element={Tool}></AuthUser>
       },
       ...demoRouter,
       {

@@ -44,6 +44,12 @@ export default function InterfaceDemo() {
   const jump = () => {
     navigate('/user')
   }
+  const [isShow, setIsSshow] = useState<boolean>(true)
+  const changeIsShow = () => {
+    setIsSshow((value) => {
+      return !value
+    })
+  }
   return (
     <div>
       <Button onClick={jump}>跳转</Button>
@@ -53,10 +59,13 @@ export default function InterfaceDemo() {
       <Button onClick={getData}>测试get请求</Button>
       <Button onClick={uploadFile}>上传文件</Button>
       <UploadFiles onChangeFn={setFileList} limit={1} fileList={fileList}></UploadFiles>
+      <hr />
+      <Button onClick={changeIsShow}>切换</Button>
+      <hr />
       {/* 编辑器 */}
-      {/* <ReactCodeEditor></ReactCodeEditor> */}
-      {/* <VueCodeEditor></VueCodeEditor> */}
-      <MarkdownCodeEditor></MarkdownCodeEditor>
+      {isShow ? <ReactCodeEditor></ReactCodeEditor> : <VueCodeEditor></VueCodeEditor>}
+      {/*  */}
+      {/* <MarkdownCodeEditor></MarkdownCodeEditor> */}
     </div>
   )
 }

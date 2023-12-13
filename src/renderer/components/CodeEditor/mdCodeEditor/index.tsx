@@ -10,7 +10,15 @@ import parseMd from 'prettier/plugins/markdown'
 
 import md from './mdHight'
 
-export default function MarkdownCodeEditor() {
+export default function MarkdownCodeEditor({
+  value,
+  setValue,
+  defaultValue
+}: {
+  value?: string
+  setValue?: any
+  defaultValue?: string
+}) {
   const [htmlVaue, setHtmlValue] = useState('')
   const edtior = useRef<any>(null)
   const transFn: any = debounceFn(
@@ -23,10 +31,12 @@ export default function MarkdownCodeEditor() {
   const handleCodeChange = () => {
     const value = edtior.current.getValue()
     transFn(value)
+    setValue && setValue(value)
   }
   useEffect(() => {
     const edit = monaco.editor.create(document.querySelector('.coderBox-code') as any, {
-      language: 'typescript'
+      language: 'typescript',
+      value: value
     })
     edit.onDidChangeModelContent(handleCodeChange)
     monaco.languages.registerDocumentFormattingEditProvider('typescript', {
@@ -51,6 +61,14 @@ export default function MarkdownCodeEditor() {
       edtior.current = null
     }
   }, [])
+
+  useEffect(() => {
+    if (!defaultValue) {
+      return
+    }
+    setHtmlValue(md.render(defaultValue))
+    edtior.current && edtior.current.setValue(defaultValue)
+  }, [defaultValue])
   return (
     <div>
       <div className="coderBox-body" style={{ display: 'flex' }}>
@@ -65,7 +83,12 @@ export default function MarkdownCodeEditor() {
             minHeight: '500px'
           }}
         >
-          <div dangerouslySetInnerHTML={{ __html: htmlVaue }}></div>
+          <div
+            style={{
+              fontSize: 16
+            }}
+            dangerouslySetInnerHTML={{ __html: htmlVaue }}
+          ></div>
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ export function addMenus(win: BrowserWindow, tray: Tray) {
   ]
   const contextMenu = Menu.buildFromTemplate(trayMenuTemplate)
   //设置此托盘图标的悬停提示内容
-  tray.setToolTip('我的托盘图标')
+  tray.setToolTip('coderHelper')
   //设置此图标的上下文菜单
   tray.setContextMenu(contextMenu)
   //单击右下角小图标显示应用左键

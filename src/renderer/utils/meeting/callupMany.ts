@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client'
 import { $serverSocketUrl, handleError } from './callupOne'
+import { VideoStreamMerger } from './mergeStream'
 
 var PeerConnection = window.RTCPeerConnection
 
@@ -7,41 +8,30 @@ var PeerConnection = window.RTCPeerConnection
 var RtcPcMaps = new Map()
 
 class CallupMany {
-  localDevice: any
   formInline: any = {}
-  talkingTimer: any
   localStream: any
   linkSocket: any
   centerDialogVisible: boolean = false
   roomUserList: any[] = []
   rtcPcParams = {
-    // iceTransportPolicy: 'relay', //强制走中继
-    iceServers: [
-      // {urls: 'turn:124.70.x.x:3478', username:'suc', credential:'suc001'},
-    ]
+    iceServers: []
   }
   mediaStatus = {
     audio: false,
     video: false
   }
-  statsTimerMap = new Map() //计时器
-  lastPeerStatsMap = new Map() //上一次统计信息
   setUserList: any
-  async getLocalStreamSettings() {
-    let videoTrack = this.localStream.getVideoTracks()[0]
-    console.log('本地媒体流最新参数', videoTrack.getSettings())
-  }
+  mergerVideo: VideoStreamMerger | null = null
 
-  // 初始化
+  // 进入会议初始化
   init(nickname: any, roomId: any, userId: any, setUserList: any) {
-    console.log(nickname, roomId, userId)
     this.formInline.nickname = nickname
     this.formInline.roomId = roomId
     this.formInline.userId = userId
-    // 用户
     this.setUserList = setUserList
     this.clientWS()
   }
+  // 连接到ws(初始化ws监听事件)
   clientWS() {
     const that = this
     this.linkSocket = io($serverSocketUrl, {
@@ -49,108 +39,169 @@ class CallupMany {
       transports: ['websocket'],
       query: that.formInline
     })
-    this.linkSocket.on('connect', async () => {
-      console.log('server init connect success', that.linkSocket)
+    this.linkSocket.on('connect', async (_e: any) => {
       that.centerDialogVisible = false //加入后
       //获取房间用户列表（新用户进房间后需要和房间内每个用户进行RTC连接 后进入着主动push offer）
-      that.linkSocket.emit('roomUserList', {
-        roomId: that.formInline.roomId
-      })
+      setTimeout(() => {
+        that.linkSocket.emit('roomUserList', {
+          roomId: that.formInline.roomId
+        })
+      }, 500)
     })
-    // 用户列表(加入会议的人)
+    // 用户列表(加入会议的所有人)
     this.linkSocket.on('roomUserList', (e: any) => {
       that.roomUserList = e
       that.setUserList(e)
       //拿到房间用户列表之后开始建立RTC连接
       that.initMeetingRoomPc()
     })
+    // 接收到消息
     this.linkSocket.on('msg', async (e: any) => {
-      console.log('msg', e)
       if (e['type'] === 'join' || e['type'] === 'leave') {
         const userId = e['data']['userId']
         const nickname = e['data']['nickname']
+        // 加入房间
         if (e['type'] === 'join') {
-          console.log('加入房间')
           that.roomUserList.push({
             userId: userId,
             nickname: nickname,
             roomId: that.formInline.roomId
           })
         } else {
-          console.log('离开房间')
+          // 离开房间
           RtcPcMaps.delete(that.formInline.userId + '-' + userId)
           that.removeChildVideoDom(userId)
         }
       }
+      // 收到信令
       if (e['type'] === 'offer') {
         await that.onRemoteOffer(e['data']['userId'], e['data']['offer'])
       }
+      // 收到应答
       if (e['type'] === 'answer') {
         await that.onRemoteAnswer(e['data']['userId'], e['data']['answer'])
       }
-      // 候选信息
+      // 收到候选信息
       if (e['type'] === 'candidate') {
         that.onCandiDate(e['data']['userId'], e['data']['candidate'])
       }
     })
+    // ws连接出现错误
     this.linkSocket.on('error', (e: any) => {
       console.log('error', e)
     })
   }
-  // 设置流媒体
-  async setDomVideoStream(domId: any, newStream: any) {
-    let video = document.getElementById(domId) as any
-    let stream = video.srcObject
-    if (stream) {
-      stream.getAudioTracks().forEach((e: any) => {
-        stream.removeTrack(e)
+
+  // 共享桌面
+  async shareDesk() {
+    this.mergerVideo?.destroy()
+    this.mergerVideo = null
+    const newStream = await this.getLocalDeskMedia()
+    this.localStream = newStream
+    this.replaceRemoteStream(newStream)
+  }
+  // 开启摄像头(合并后的音视频)
+  async shareAssignSchema() {
+    this.mergerVideo?.destroy()
+    this.mergerVideo = null
+    const newStream = await this.getAssignMedia()
+    this.localStream = newStream
+    this.replaceRemoteStream(newStream)
+  }
+  // 显示默认视频流(只有摄像头)
+  async shareDefault() {
+    this.mergerVideo?.destroy()
+    this.mergerVideo = null
+    const newStream = await this.getLocalUserMedia()
+    this.localStream = newStream
+    this.replaceRemoteStream(newStream)
+  }
+
+  // 获取摄像头设备信息
+  async getLocalUserMedia() {
+    const audioId = this.formInline.audioInId
+    const videoId = this.formInline.videoId
+    const constraints = {
+      audio: { deviceId: audioId ? { exact: audioId } : undefined },
+      video: {
+        deviceId: videoId ? { exact: videoId } : undefined,
+        width: 640,
+        height: 480,
+        frameRate: { ideal: 20, max: 24 }
+      }
+    }
+    if ((window as any).stream) {
+      ;(window as any).stream.getTracks().forEach((track: any) => {
+        track.stop()
       })
-      stream.getVideoTracks().forEach((e: any) => {
-        stream.removeTrack(e)
+    }
+    return await navigator.mediaDevices.getUserMedia(constraints).catch(handleError)
+  }
+  // 获取共享桌面视频流
+  async getLocalDeskMedia() {
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      audio: true,
+      video: true
+    })
+    const audioTrack = await navigator.mediaDevices.getUserMedia({
+      audio: true
+    })
+    // 添加声音轨道
+    stream.addTrack(audioTrack.getAudioTracks()[0])
+    return stream
+  }
+  // 获取合并后的视频流
+  async getAssignMedia() {
+    const audioId = this.formInline.audioInId
+    const videoId = this.formInline.videoId
+    let localstream = await navigator.mediaDevices.getUserMedia({
+      audio: { deviceId: audioId ? { exact: audioId } : undefined },
+      video: {
+        deviceId: videoId ? { exact: videoId } : undefined,
+        width: 1920,
+        height: 1080,
+        frameRate: { ideal: 15, max: 24 }
+      }
+    })
+    let shareStream = await navigator.mediaDevices.getDisplayMedia({
+      video: { width: 1920, height: 1080 },
+      audio: false
+    })
+    this.mergerVideo = new VideoStreamMerger({ fps: 24, clearRect: true })
+    this.mergerVideo.addStream(shareStream, {
+      x: 0,
+      y: 0,
+      width: this.mergerVideo.width,
+      height: this.mergerVideo.height,
+      mute: true
+    })
+    this.mergerVideo.addStream(localstream, {
+      x: 0,
+      y: 0,
+      width: 200,
+      height: 150,
+      mute: false
+    })
+    this.mergerVideo.start()
+    return this.mergerVideo.result
+  }
+
+  // 切换远程流
+  async replaceRemoteStream(newStream: any) {
+    // 先关闭原始的音视频流
+    if ((window as any).stream) {
+      ;(window as any).stream.getTracks().forEach((track: any) => {
+        track.stop()
       })
     }
-    video.srcObject = newStream
-    video.muted = true
-  }
-  // 会议有人离开了，要把video元素给删除掉
-  removeChildVideoDom(domId: any) {
-    let video = document.getElementById(domId) as any
-    if (video) {
-      video.parentNode.removeChild(video)
-    }
-  }
-  // 有人进入会议创建标签
-  createRemoteDomVideoStream(domId: any, trick: any) {
-    let parentDom = document.getElementById('allVideo') as any
-    let id = domId + '-media'
-    let video = document.getElementById(id) as any
-    if (!video) {
-      video = document.createElement('video')
-      video.id = id
-      video.controls = true
-      video.autoplay = true
-      video.muted = false
-      video.style.width = '100%'
-      video.style.height = '100%'
-    }
-    let stream = video.srcObject
-    console.log('stream==>trick', stream, trick)
-    if (stream) {
-      stream.addTrack(trick)
-    } else {
-      let newStream = new MediaStream()
-      newStream.addTrack(trick)
-      video.srcObject = newStream
-      video.muted = false
-      parentDom.appendChild(video)
-    }
-  }
-  // 候选信息
-  onCandiDate(fromUid: any, candidate: any) {
-    const localUid = this.formInline.userId
-    let pcKey = localUid + '-' + fromUid
-    let pc = RtcPcMaps.get(pcKey)
-    pc.addIceCandidate(candidate)
+    await this.setDomVideoStream('localdemo01', newStream)
+    const [videoTrack] = newStream.getVideoTracks()
+    //多个RTC关联
+    RtcPcMaps.forEach((e) => {
+      const senders = e.getSenders()
+      const send = senders.find((s: any) => s.track.kind === 'video')
+      send.replaceTrack(videoTrack)
+    })
   }
   // 遍历建立联系
   async initMeetingRoomPc() {
@@ -164,7 +215,7 @@ class CallupMany {
     const localUid = this.formInline.userId
     let others = this.roomUserList
       .filter((e: any) => e.userId !== localUid)
-      .map((e: any) => {
+      .map((e: any, _index: any) => {
         return e.userId
       })
     // 遍历其他用户，建立连接
@@ -188,25 +239,52 @@ class CallupMany {
       that.onPcEvent(pc, localUid, uid)
     })
   }
-  // 获取设备信息
-  async getLocalUserMedia() {
-    const audioId = this.formInline.audioInId
-    const videoId = this.formInline.videoId
-    const constraints = {
-      audio: { deviceId: audioId ? { exact: audioId } : undefined },
-      video: {
-        deviceId: videoId ? { exact: videoId } : undefined,
-        width: 640,
-        height: 480,
-        frameRate: { ideal: 20, max: 24 }
-      }
-    }
-    if ((window as any).stream) {
-      ;(window as any).stream.getTracks().forEach((track: any) => {
-        track.stop()
+  // 设置本地音视频
+  async setDomVideoStream(domId: any, newStream: any) {
+    let video = document.getElementById(domId) as any
+    let stream = video.srcObject
+    if (stream) {
+      stream.getAudioTracks().forEach((e: any) => {
+        stream.removeTrack(e)
+      })
+      stream.getVideoTracks().forEach((e: any) => {
+        stream.removeTrack(e)
       })
     }
-    return await navigator.mediaDevices.getUserMedia(constraints).catch(handleError)
+    video.srcObject = newStream
+    video.muted = true
+  }
+  // 会议有人离开了，把对应的video元素给删除掉
+  removeChildVideoDom(domId: any) {
+    let video = document.getElementById(domId) as any
+    if (video) {
+      video.parentNode.removeChild(video)
+    }
+  }
+  // 有人进入会议创建对应的video元素
+  createRemoteDomVideoStream(domId: any, trick: any) {
+    let parentDom = document.getElementById('allVideo') as any
+    let id = domId + '-media'
+    let video = document.getElementById(id) as any
+    if (!video) {
+      video = document.createElement('video')
+      video.id = id
+      video.controls = true
+      video.autoplay = true
+      video.muted = true
+      video.style.width = '100%'
+      video.style.height = '100%'
+    }
+    let stream = video.srcObject
+    if (stream) {
+      stream.addTrack(trick)
+    } else {
+      let newStream = new MediaStream()
+      newStream.addTrack(trick)
+      video.srcObject = newStream
+      video.muted = false
+      parentDom.appendChild(video)
+    }
   }
   // 事件监听
   onPcEvent(pc: any, localUid: any, remoteUid: any) {
@@ -226,6 +304,13 @@ class CallupMany {
         console.log('在此次协商中，没有更多的候选了')
       }
     }
+  }
+  // 候选信息
+  onCandiDate(fromUid: any, candidate: any) {
+    const localUid = this.formInline.userId
+    let pcKey = localUid + '-' + fromUid
+    let pc = RtcPcMaps.get(pcKey)
+    pc.addIceCandidate(candidate)
   }
   // 创建offer
   async onRemoteOffer(fromUid: any, offer: any) {
@@ -256,7 +341,7 @@ class CallupMany {
   }
   // 打开或关闭麦克风
   audioControl(b: any) {
-    RtcPcMaps.forEach((v) => {
+    RtcPcMaps.forEach((v, _k) => {
       const senders = v.getSenders()
       const send = senders.find((s: any) => s.track.kind === 'audio')
       send.track.enabled = b
@@ -267,7 +352,7 @@ class CallupMany {
   }
   // 打开或关闭视频
   videoControl(b: any) {
-    RtcPcMaps.forEach((v) => {
+    RtcPcMaps.forEach((v, _k) => {
       const senders = v.getSenders()
       const send = senders.find((s: any) => s.track.kind === 'video')
       send.track.enabled = b
@@ -278,17 +363,11 @@ class CallupMany {
   }
   // 默认静音和关闭摄像头
   initMediaStatus() {
-    this.localStream.getVideoTracks()[0].enabled = false
-    this.localStream.getAudioTracks()[0].enabled = false
-    console.log('进入房间默认已关闭你的麦克风和摄像头，请手动打开')
+    // this.localStream.getVideoTracks()[0].enabled = false;
+    // this.localStream.getAudioTracks()[0].enabled = false;
+    // console.log("进入房间默认已关闭你的麦克风和摄像头，请手动打开");
   }
-  // 监听当前是否再在视频或语音
-  listenerIsTalking() {
-    RtcPcMaps.forEach((_v) => {
-      // let senders = v.getSenders()
-      //获取音频或者视频 判断是否激活状态 如果是则表明正在视频或者正在语音
-    })
-  }
+  // 获取对应dom元素对应的音频状态
   getAudioStatus(domId: any) {
     console.log('domId', domId)
     let video = document.getElementById(domId) as any
