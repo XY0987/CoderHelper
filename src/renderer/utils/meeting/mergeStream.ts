@@ -47,22 +47,18 @@ export interface AddStreamOptions {
 }
 
 /**
- * Merges the video of multiple MediaStreams. Also merges the audio via the WebAudio API.
- *
- * - Send multiple videos over a single WebRTC MediaConnection
- * - Hotswap streams without worrying about renegotation or delays
- * - Crop, scale, and rotate live video
- * - Add crazy effects through the canvas API
- */
+合并多个mediastream的视频。还通过WebAudio API合并音频。
+
+ -发送多个视频在一个单一的WebRTC MediaConnection
+ -无需担心重新协商或延迟的热插拔流
+ -裁剪，缩放和旋转现场视频
+ -通过画布API添加疯狂的效果
+*/
 export class VideoStreamMerger {
-  /**
-   * Width of the merged MediaStream
-   */
+  // 合并流的宽度
   public width = 720
 
-  /**
-   * Height of the merged MediaStream
-   */
+  // 合并流的高度
   public height = 405
   public fps = 25
   private _streams: any[] = []
@@ -71,10 +67,7 @@ export class VideoStreamMerger {
   public clearRect = true
   public started = false
 
-  /**
-   * The resulting merged MediaStream. Only available after calling merger.start()
-   * Never has more than one Audio and one Video track.
-   */
+  // 合并流的最终结果
   public result: MediaStream | null = null
   public supported: boolean | null = null
 
@@ -99,11 +92,11 @@ export class VideoStreamMerger {
     const audioCtx = (this._audioCtx = new AudioContext())
     const audioDestination = (this._audioDestination = audioCtx?.createMediaStreamDestination())
 
-    // delay node for video sync
+    // 延迟的时间
     this._videoSyncDelayNode = audioCtx.createDelay(5.0)
     this._videoSyncDelayNode.connect(audioDestination)
 
-    this._setupConstantNode() // HACK for wowza #7, #10
+    this._setupConstantNode()
 
     this.started = false
     this.result = null
@@ -119,9 +112,7 @@ export class VideoStreamMerger {
     this.clearRect = options.clearRect === undefined ? true : options.clearRect
   }
 
-  /**
-   * Change the size of the canvas and the output video track.
-   */
+  // 更改画布和输出视频轨道的大小。
   setOutputSize(width: number, height: number): void {
     this.width = width
     this.height = height
@@ -132,16 +123,12 @@ export class VideoStreamMerger {
     }
   }
 
-  /**
-   * Get the WebAudio AudioContext being used by the merger.
-   */
+  // 获取合并使用的WebAudio AudioContext。
   getAudioContext(): AudioContext | null {
     return this._audioCtx
   }
 
-  /**
-   * Get the MediaStreamDestination node that is used by the merger.
-   */
+  // 获取合并使用的MediaStreamDestination节点。
   getAudioDestination(): MediaStreamAudioDestinationNode | null {
     return this._audioDestination
   }
@@ -152,11 +139,11 @@ export class VideoStreamMerger {
 
   private _backgroundAudioHack() {
     if (this._audioCtx) {
-      // stop browser from throttling timers by playing almost-silent audio
+      // 停止浏览器从节流定时器播放几乎无声的音频
       const source = this._createConstantSource()
       const gainNode = this._audioCtx.createGain()
       if (gainNode && source) {
-        gainNode.gain.value = 0.001 // required to prevent popping on start
+        gainNode.gain.value = 0.001 // 需要防止启动时声音过大
         source.connect(gainNode)
         gainNode.connect(this._audioCtx.destination)
         source.start()
@@ -171,7 +158,7 @@ export class VideoStreamMerger {
       if (constantAudioNode) {
         constantAudioNode.start()
 
-        const gain = this._audioCtx.createGain() // gain node prevents quality drop
+        const gain = this._audioCtx.createGain()
         gain.gain.value = 0
 
         constantAudioNode.connect(gain)
@@ -186,7 +173,7 @@ export class VideoStreamMerger {
         return this._audioCtx.createConstantSource()
       }
 
-      // not really a constantSourceNode, just a looping buffer filled with the offset value
+      // 不是一个真正的常量sourcenode，只是一个循环缓冲区填充偏移值
       const constantSourceNode = this._audioCtx.createBufferSource()
       const constantBuffer = this._audioCtx.createBuffer(1, 1, this._audioCtx.sampleRate)
       const bufferData = constantBuffer.getChannelData(0)
@@ -198,10 +185,10 @@ export class VideoStreamMerger {
     }
   }
 
-  /**
-   * Update the z-index (draw order) of an already added stream or data object. Identical to the index option.
-   * If you have added the same MediaStream multiple times, all instances will be updated.
-   */
+  /*
+ 更新已经添加的流或数据对象的z索引(绘制顺序)。与索引选项相同。
+如果您多次添加相同的MediaStream，所有实例将被更新。
+ */
   updateIndex(mediaStream: MediaStream | string | { id: string }, index: number): void {
     if (typeof mediaStream === 'string') {
       mediaStream = {
@@ -223,14 +210,14 @@ export class VideoStreamMerger {
     this._streams = this._streams.sort((a, b) => a.index - b.index)
   }
 
-  /**
-   * A convenience function to merge a HTML5 MediaElement instead of a MediaStream.
-   *
-   * id is a string used to remove or update the index of the stream later.
-   * mediaElement is a playing HTML5 Audio or Video element.
-   * options are identical to the opts for addStream.
-   * Streams from MediaElements can be removed via merger.removeStream(id).
-   */
+  /*
+
+  一个方便的功能来合并HTML5 MediaElement而不是MediaStream。
+  id是一个字符串，用于稍后删除或更新流的索引。
+  mediaElement是一个播放HTML5音频或视频的元素。
+  选项与addStream的选项相同。
+  MediaElements中的流可以通过merge . removestream (id)删除。
+  */
   addMediaElement(id: string, element: HTMLMediaElement, opts: any): void {
     opts = opts || {}
 
@@ -248,7 +235,7 @@ export class VideoStreamMerger {
         if (opts.oldDraw) {
           opts.oldDraw(ctx, element, done)
         } else {
-          // default draw function
+          // 默认绘画函数
           const width = opts.width == null ? this.width : opts.width
           const height = opts.height == null ? this.height : opts.height
           ctx.drawImage(element, opts.x, opts.y, width, height)
@@ -262,8 +249,9 @@ export class VideoStreamMerger {
     if (this._audioCtx && !opts.mute) {
       const audioSource =
         element._mediaElementSource || this._audioCtx.createMediaElementSource(element)
-      element._mediaElementSource = audioSource // can only make one source per element, so store it for later (ties the source to the element's garbage collection)
-      audioSource.connect(this._audioCtx.destination) // play audio from original element
+      //每个元素只能生成一个源，因此将其存储起来以备以后使用(将源绑定到元素的垃圾收集)
+      element._mediaElementSource = audioSource
+      audioSource.connect(this._audioCtx.destination) // 播放原始元素的音频
 
       const gainNode = this._audioCtx.createGain()
       audioSource.connect(gainNode)
@@ -271,7 +259,7 @@ export class VideoStreamMerger {
         (element instanceof HTMLVideoElement || element instanceof HTMLAudioElement) &&
         element.muted
       ) {
-        // keep the element "muted" while having audio on the merger
+        // 在合并时有音频时，保持元素“静音”
         element.muted = false
         element.volume = 0.001
         gainNode.gain.value = 1000
@@ -291,9 +279,9 @@ export class VideoStreamMerger {
     this.addStream(id, opts)
   }
 
-  /**
-   * Add a MediaStream to be merged. Use an id string if you only want to provide an effect.
-   * The order that streams are added matters. Streams placed earlier will be behind later streams (use the index option to change this behaviour.)
+  /*
+   添加要合并的MediaStream。如果您只想提供效果，请使用id字符串。
+    添加流的顺序很重要。较早放置的流将落后于较晚放置的流(使用index选项更改此行为)。
    */
   addStream(mediaStream: MediaStream | string, opts: AddStreamOptions | undefined): void {
     if (typeof mediaStream === 'string') {
@@ -315,7 +303,7 @@ export class VideoStreamMerger {
     stream.hasVideo = mediaStream.getVideoTracks().length > 0
     stream.hasAudio = mediaStream.getAudioTracks().length > 0
 
-    // If it is the same MediaStream, we can reuse our video element (and ignore sound)
+    // 如果是同一个MediaStream，我们可以重复使用video元素(忽略声音)。
     let videoElement: HTMLVideoElement | null = null
     for (let i = 0; i < this._streams.length; i++) {
       if (this._streams[i].id === mediaStream.id) {
@@ -340,12 +328,12 @@ export class VideoStreamMerger {
 
       if (stream.hasAudio && this._audioCtx && !stream.mute) {
         stream.audioSource = this._audioCtx.createMediaStreamSource(mediaStream)
-        stream.audioOutput = this._audioCtx.createGain() // Intermediate gain node
+        stream.audioOutput = this._audioCtx.createGain() // 中间增益节点
         stream.audioOutput.gain.value = 1
         if (stream.audioEffect) {
           stream.audioEffect(stream.audioSource, stream.audioOutput)
         } else {
-          stream.audioSource.connect(stream.audioOutput) // Default is direct connect
+          stream.audioSource.connect(stream.audioOutput) // 默认为直连
         }
         stream.audioOutput.connect(this._videoSyncDelayNode)
       }
@@ -357,9 +345,9 @@ export class VideoStreamMerger {
     this._sortStreams()
   }
 
-  /**
-   * Remove a MediaStream from the merging. You may also use the ID of the stream.
-   * If you have added the same MediaStream multiple times, all instances will be removed.
+  /*
+   从合并中删除MediaStream。您也可以使用流的ID。
+   如果您多次添加相同的MediaStream，所有实例将被删除。
    */
   removeStream(mediaStream: MediaStream | string | { id: string }): void {
     if (typeof mediaStream === 'string') {
@@ -410,7 +398,7 @@ export class VideoStreamMerger {
     this._sortStreams()
   }
 
-  // Wrapper around requestAnimationFrame and setInterval to avoid background throttling
+  // 包装requestAnimationFrame和setInterval以避免背景节流
   private _requestAnimationFrame(callback: () => void) {
     let fired = false
     const interval = setInterval(() => {
@@ -430,9 +418,9 @@ export class VideoStreamMerger {
   }
 
   /**
-   * Start the merging and create merger.result.
-   * You can call this any time, but you only need to call it once.
-   * You will still be able to add/remove streams and the result stream will automatically update.
+   开始合并并创建merge .result。
+  你可以在任何时候调用它，但你只需要调用一次。
+    您仍然可以添加/删除流，结果流将自动更新。
    */
   start(): void {
     // Hidden canvas element for merging
@@ -445,16 +433,16 @@ export class VideoStreamMerger {
     this.started = true
     this._requestAnimationFrame(this._draw.bind(this))
 
-    // Add video
+    // 添加视频
     this.result = this._canvas?.captureStream(this.fps) || null
 
-    // Remove "dead" audio track
+    // 删除“死”音轨
     const deadTrack = this.result?.getAudioTracks()[0]
     if (deadTrack) {
       this.result?.removeTrack(deadTrack)
     }
 
-    // Add audio
+    // 添加音频
     const audioTracks = this._audioDestination?.stream.getAudioTracks()
     if (audioTracks && audioTracks.length) {
       this.result?.addTrack(audioTracks[0])
@@ -477,7 +465,7 @@ export class VideoStreamMerger {
 
     this._frameCount++
 
-    // update video processing delay every 60 frames
+    // 每60帧更新一次视频处理延迟
     let t0 = 0
     if (this._frameCount % 60 === 0) {
       t0 = performance.now()
@@ -500,7 +488,7 @@ export class VideoStreamMerger {
     }
     this._streams.forEach((stream) => {
       if (stream.draw) {
-        // custom frame transform
+        // 自定义框架变换
         stream.draw(this._ctx, stream.element, done)
       } else if (!stream.isData && stream.hasVideo) {
         this._drawVideo(stream.element, stream)
@@ -516,7 +504,7 @@ export class VideoStreamMerger {
   }
 
   private _drawVideo(element: HTMLVideoElement, stream: any) {
-    // default draw function
+    // 默认渲染函数
 
     const canvasHeight = this.height
     const canvasWidth = this.width
@@ -530,13 +518,13 @@ export class VideoStreamMerger {
     try {
       this._ctx?.drawImage(element, positionX, positionY, width, height)
     } catch (err) {
-      // Ignore error possible "IndexSizeError (DOM Exception 1): The index is not in the allowed range." due Safari bug.
+      // 忽略可能的错误“IndexSizeError (DOM Exception 1):索引不在允许的范围内。”由于Safari错误。
       console.error(err)
     }
   }
 
-  /**
-   * Clean up everything and destroy the result stream.
+  /*
+  清理所有内容并销毁结果流。
    */
   stop(): void {
     this.started = false
